@@ -145,7 +145,8 @@ body {
                     <a href="#" class="nav-link flex items-center justify-center w-12 h-12 mb-4 rounded-lg text-gray-400 hover:bg-brand-gold hover:text-white" data-target="clientes" title="Clientes"><i class="fas fa-handshake"></i></a>
                     <a href="#" class="nav-link flex items-center justify-center w-12 h-12 mb-4 rounded-lg text-gray-400 hover:bg-brand-gold hover:text-white" data-target="rh" title="RH"><i class="fas fa-briefcase"></i></a>
                     <a href="#" class="nav-link flex items-center justify-center w-12 h-12 mb-4 rounded-lg text-gray-400 hover:bg-brand-gold hover:text-white" data-target="reembolsos" title="Reembolsos"><i class="fas fa-receipt"></i></a>
-            </nav>
+                    <a href="#" class="nav-link flex items-center justify-center w-12 h-12 mb-4 rounded-lg text-gray-400 hover:bg-brand-gold hover:text-white" data-target="validades" title="Validades"><i class="fas fa-shield-alt"></i></a>
+                </nav>
         </aside>
             <!-- Overlay for mobile sidebar -->
             <div id="sidebar-overlay" class="fixed inset-0 z-20 bg-black bg-opacity-50 hidden lg:hidden"></div>
@@ -929,6 +930,161 @@ body {
         </form>
     </div>
 </div>
+<div id="validades" class="page hidden">
+    <div class="mb-4">
+        <h2 class="text-3xl font-bold text-gray-800 dark:text-white">Controle de Validades</h2>
+        <p class="text-gray-600 dark:text-gray-300">Gerenciamento de certificados, licenças e alvarás.</p>
+    </div>
+ <div class="mb-6 border-b border-gray-200 dark:border-gray-700">
+        <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="validades-tabs">
+            <li class="mr-2"><button class="validades-tab-btn inline-block p-4 border-b-2 rounded-t-lg border-brand-gold text-brand-gold" data-target="validades-content">Validades</button></li>
+            <li class="mr-2"><button class="validades-tab-btn inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" data-target="dados-content">Dados</button></li>
+        </ul>
+    </div>
+    <div id="validades-content" class="validades-tab-content">
+        <div class="flex justify-end items-center mb-4">
+            <button id="show-validade-form" class="bg-brand-gold text-white px-4 py-2 rounded-lg shadow hover:bg-brand-gold-dark transition-colors">Nova Validade</button>
+        </div>
+
+        <div id="validades-history-container">
+            <!-- Filtros -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4 p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+            <div>
+                <label for="filter-validade-start-date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Validade De</label>
+                <input type="date" id="filter-validade-start-date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600">
+            </div>
+            <div>
+                <label for="filter-validade-end-date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Validade Até</label>
+                <input type="date" id="filter-validade-end-date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600">
+            </div>
+             <div id="filter-validade-consultor-wrapper"> 
+                <label for="filter-validade-consultor" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Consultor</label>
+                <select id="filter-validade-consultor" class="consultor-select bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600"></select>
+            </div>
+             <div> 
+                <label for="filter-validade-cliente" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cliente</label>
+                <select id="filter-validade-cliente" class="cliente-select bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600"></select>
+            </div>
+            <div>
+                    <label for="filter-validade-tipo" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipo</label>
+                    <select id="filter-validade-tipo" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600">
+                        <option value="">Todos</option>
+                        <option value="Certificados dos Bombeiros">Certificados dos Bombeiros</option>
+                        <option value="Alvará de Funcionamento">Alvará de Funcionamento</option>
+                        <option value="Manual de Boas Práticas e POP's">Manual de Boas Práticas e POP's</option>
+                        <option value="Certificado de Capacitação">Certificado de Capacitação</option>
+                        <option value="Licença Sanitária">Licença Sanitária</option>
+                        <option value="Licença Ambiental">Licença Ambiental</option>
+                        <option value="Licença de Publicidade">Licença de Publicidade</option>
+                        <option value="Licença Sonora">Licença Sonora</option>
+                        <option value="PGRS (Plano de Gerenciamento de Resíduos Sólidos)">PGRS</option>
+                        <option value="Análise de Água">Análise de Água</option>
+                        <option value="Controle de Pragas">Controle de Pragas</option>
+                        <option value="Cadastro Técnico">Cadastro Técnico</option>
+                        <option value="Certificado CRQ">Certificado CRQ</option>
+                        <option value="Comunicação o CRQ">Comunicação o CRQ</option>
+                        <option value="Inspeção Predial">Inspeção Predial</option>
+                    </select>
+                </div>
+            <div>
+                <label for="filter-validade-status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+                <select id="filter-validade-status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600">
+                    <option value="">Todos</option>
+                    <option value="Vigente">Vigente</option>
+                    <option value="Vencido">Vencido</option>
+                    <option value="Pendente">Pendente</option>
+                    <option value="Em processo">Em processo</option>
+                    <option value="Isenção">Isenção</option>
+                    <option value="Não se aplica">Não se aplica</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Tabela para Desktop -->
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg hidden md:block">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-300">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Cliente</th>
+                        <th scope="col" class="px-6 py-3">Tipo</th>
+                        <th scope="col" class="px-6 py-3">Validade</th>
+                        <th scope="col" class="px-6 py-3">Status</th>
+                        <th scope="col" class="px-6 py-3">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="validades-table-body"></tbody>
+            </table>
+        </div>
+        <!-- Cards para Mobile -->
+        <div id="validades-cards-container" class="grid grid-cols-1 gap-4 md:hidden"></div>
+    </div>
+
+    <!-- Formulário de Nova/Edição Validade -->
+    <div id="validade-form-container" class="hidden mt-6 p-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
+        <h3 class="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Cadastrar Validade</h3>
+        <form id="validade-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <div>
+                <label for="validade-cliente" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cliente</label>
+                <select id="validade-cliente" class="cliente-select bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600" required></select>
+            </div>
+             <div>
+                <label for="validade-consultor" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Consultor Responsável</label>
+                <select id="validade-consultor" class="consultor-select bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600" required></select>
+            </div>
+            <div>
+                <label for="validade-tipo-form" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipo de Documento</label>
+                <select id="validade-tipo-form" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600" required>
+                    <option value="">Selecione...</option>
+                    <option value="Certificados dos Bombeiros">Certificados dos Bombeiros</option>
+                    <option value="Alvará de Funcionamento">Alvará de Funcionamento</option>
+                    <option value="Manual de Boas Práticas e POP's">Manual de Boas Práticas e POP's</option>
+                    <option value="Certificado de Capacitação">Certificado de Capacitação</option>
+                    <option value="Licença Sanitária">Licença Sanitária</option>
+                    <option value="Licença Ambiental">Licença Ambiental</option>
+                    <option value="Licença de Publicidade">Licença de Publicidade</option>
+                    <option value="Licença Sonora">Licença Sonora</option>
+                    <option value="PGRS (Plano de Gerenciamento de Resíduos Sólidos)">PGRS</option>
+                    <option value="Análise de Água">Análise de Água</option>
+                    <option value="Controle de Pragas">Controle de Pragas</option>
+                    <option value="Cadastro Técnico">Cadastro Técnico</option>
+                    <option value="Certificado CRQ">Certificado CRQ</option>
+                    <option value="Comunicação o CRQ">Comunicação o CRQ</option>
+                    <option value="Inspeção Predial">Inspeção Predial</option>
+                </select>
+            </div>
+            <div>
+                <label for="validade-data" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Data de Validade</label>
+               <input type="date" id="validade-data" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600">
+            </div>
+            <div class="md:col-span-2">
+                <label for="validade-status-form" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+                <select id="validade-status-form" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600" required>
+                    <option value="">Selecione...</option>
+                    <option value="Vigente">Vigente</option>
+                    <option value="Vencido">Vencido</option>
+                    <option value="Pendente">Pendente</option>
+                    <option value="Em processo">Em processo</option>
+                    <option value="Isenção">Isenção</option>
+                    <option value="Não se aplica">Não se aplica</option>
+                </select>
+            </div>
+            <div class="md:col-span-2">
+                <label for="validade-observacao" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Observações</label>
+                <textarea id="validade-observacao" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-brand-gold focus:border-brand-gold dark:bg-gray-700 dark:border-gray-600"></textarea>
+            </div>
+            <div class="md:col-span-2 flex justify-end space-x-4">
+                <button type="button" class="cancel-sub-form px-6 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600" data-form="validade-form-container" data-history="validades-history-container">Cancelar</button>
+                <button type="submit" class="px-6 py-2 text-sm font-medium text-white bg-brand-gold rounded-md hover:bg-brand-gold-dark">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+ <div id="dados-content" class="validades-tab-content hidden">
+        <h3 class="text-xl font-bold text-gray-800 dark:text-white">Dados e Estatísticas</h3>
+        <p class="text-gray-600 dark:text-gray-300 mt-2">Esta área será implementada em breve.</p>
+    </div>
+</div>
                 </main>
             </div>
         </div>
@@ -1250,6 +1406,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let itemsParaAdicionar = [];
     let clienteDocsData = [];
     let reembolsosData = [];
+    let validadesData = [];
 
      const GLOBAL_LABEL_MAP = {
         // Campos de Consultor e Cliente
@@ -1293,6 +1450,8 @@ document.addEventListener('DOMContentLoaded', function() {
         requisicoesdoconsultor:'Total de Requisições',
         motivo: 'Motivo do Reembolso',
         clientes_docs: 'Total de Documentos',
+        validade: 'Data de Validade', 
+        tipo: 'Tipo de Documento',
     };
 
     // --- Variáveis de Estado da UI ---
@@ -1629,7 +1788,7 @@ function renderModalCatalogoGrid(category = 'Todos') {
     // --- Funções de Carregamento de Dados (Fetch) ---
 async function fetchAllData() {
     showLoadingOverlay('Carregando dados...');
-    await Promise.all([ fetchConsultores(), fetchClientes(), fetchCustos(), fetchItensCatalogo(), fetchClienteDocs(), fetchReembolsos() ]);
+   await Promise.all([ fetchConsultores(), fetchClientes(), fetchCustos(), fetchItensCatalogo(), fetchClienteDocs(), fetchReembolsos(), fetchValidades() ]);
     await Promise.all([ fetchVisitas(), fetchReceitas(), fetchRequisicoes(), fetchFerias(), fetchAtestados(), fetchEpis(), fetchAtivos(), fetchRequisicoesItens() ]);
     
     renderConsultores();
@@ -1667,6 +1826,7 @@ async function fetchAllData() {
     applyAndRenderReceitas();
     applyAndRenderCustos();
     applyAndRenderReembolsos();
+    applyAndRenderValidades();
     applyAndRenderFerias();
     applyAndRenderAtestados();
     applyAndRenderEpis();
@@ -1686,6 +1846,10 @@ async function fetchAllData() {
     async function fetchClientes() { const result = await nocoFetch('Clientes?nested[all]=true'); if (result && result.list) clientesData = result.list; }
     async function fetchVisitas() { const result = await nocoFetch('Visitas?nested[all]=true'); if(result && result.list) { visitsData = result.list.map(v => ({...v, startTime: v.HoraInicio ? `${v.DataVisita}T${v.HoraInicio}`:null, endTime: v.HoraFim ? `${v.DataVisita}T${v.HoraFim}`:null })); } else { visitsData = []; }}
     async function fetchReceitas() { const result = await nocoFetch('Receitas?nested[all]=true'); if (result && result.list) receitasData = result.list; }
+    async function fetchValidades() { 
+    const result = await nocoFetch('Validades?nested[all]=true'); 
+    if(result && result.list) validadesData = result.list; else validadesData = []; 
+}
     async function fetchCustos() { const result = await nocoFetch('Custos?nested[all]=true'); if (result && result.list) custosData = result.list; }
    async function fetchRequisicoes() { 
         const result = await nocoFetch('Requisicoes?nested[all]=true'); // Busca com os relacionamentos aninhados
@@ -1875,6 +2039,61 @@ async function fetchReembolsos() {
         }
     }
     // --- Funções de Renderização ---
+    function renderValidades(data = validadesData) {
+    const tbody = document.getElementById('validades-table-body');
+    const cardsContainer = document.getElementById('validades-cards-container');
+    if (!tbody || !cardsContainer) return;
+
+    tbody.innerHTML = '';
+    cardsContainer.innerHTML = '';
+
+    const getStatusClass = (status) => {
+        switch (status) {
+            case 'Vigente': return 'bg-green-200 text-green-800';
+            case 'Vencido': return 'bg-red-200 text-red-800';
+            case 'Pendente': return 'bg-yellow-200 text-yellow-800';
+            case 'Em processo': return 'bg-blue-200 text-blue-800';
+            default: return 'bg-gray-200 text-gray-800'; // Isenção, Não se aplica
+        }
+    };
+
+    data.forEach(v => {
+        const statusClass = getStatusClass(v.Status);
+        // Somente Admin pode editar/apagar
+        const canModify = loggedInUser.Role === 'Admin';
+        
+        let actionsHTML = `<button class="table-details-btn text-gray-500" data-type="validade" title="Ver Detalhes"><i class="fas fa-eye"></i></button>`;
+        if (canModify) {
+            actionsHTML += `<button class="table-edit-btn text-blue-500" data-type="validade" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="table-delete-btn text-red-500" data-type="validade" title="Apagar"><i class="fas fa-trash"></i></button>`;
+        }
+
+        // Tabela Desktop
+        tbody.innerHTML += `
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" data-id="${v.Id}">
+                <td class="px-6 py-4">${v.Clientes?.Nome || 'N/A'}</td>
+                <td class="px-6 py-4">${v.Tipo || 'N/A'}</td>
+                <td class="px-6 py-4">${v.Validade ? new Date(v.Validade + 'T00:00:00').toLocaleDateString('pt-BR') : 'N/A'}</td>
+                <td class="px-6 py-4"><span class="text-xs font-semibold px-2 py-0.5 rounded-full ${statusClass}">${v.Status}</span></td>
+                <td class="px-6 py-4 space-x-2">${actionsHTML}</td>
+            </tr>`;
+
+        // Card Mobile
+        cardsContainer.innerHTML += `
+            <div class="p-4 bg-white rounded-lg shadow dark:bg-gray-800 border dark:border-gray-700" data-id="${v.Id}">
+                <div class="flex justify-between items-start">
+                    <p class="text-lg font-semibold text-gray-900 dark:text-white">${v.Clientes?.Nome || 'N/A'}</p>
+                    <span class="text-xs font-semibold px-2 py-0.5 rounded-full ${statusClass}">${v.Status}</span>
+                </div>
+                <div class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    <p><strong>Tipo:</strong> ${v.Tipo || 'N/A'}</p>
+                    <p><strong>Validade:</strong> ${v.Validade ? new Date(v.Validade + 'T00:00:00').toLocaleDateString('pt-BR') : 'N/A'}</p>
+                    <p><strong>Consultor:</strong> ${v.Consultores?.Nome || 'N/A'}</p>
+                </div>
+                <div class="flex justify-end pt-2 mt-2 border-t dark:border-gray-600 space-x-2">${actionsHTML}</div>
+            </div>`;
+    });
+}
     function renderConsultores(data = consultoresData) { 
         document.getElementById('rh-cards-container').innerHTML = data.map(c => createConsultorCard(c)).join(''); 
     }
@@ -2245,6 +2464,24 @@ function renderAtivos(data = ativosData) {
             </div>`;
     });
 }
+function applyAndRenderValidades() {
+    const startDate = document.getElementById('filter-validade-start-date').value;
+    const endDate = document.getElementById('filter-validade-end-date').value;
+    const consultorId = document.getElementById('filter-validade-consultor').value;
+    const clienteId = document.getElementById('filter-validade-cliente').value;
+    const status = document.getElementById('filter-validade-status').value;
+    const tipo = document.getElementById('filter-validade-tipo').value;
+    
+    let filtered = validadesData.filter(v =>
+        (!startDate || v.Validade >= startDate) &&
+        (!endDate || v.Validade <= endDate) &&
+        (!consultorId || v.Consultores?.Id == consultorId) &&
+        (!clienteId || v.Clientes?.Id == clienteId) &&
+        (!status || v.Status === status) && // <-- INÍCIO DA CORREÇÃO: O '&&' foi adicionado aqui
+        (!tipo || v.Tipo === tipo)
+    );
+    renderValidades(filtered);
+}
         function applyConsultorFilters() {
         const searchTerm = document.getElementById('rh-search').value.toLowerCase();
         const statusFilterBtn = document.querySelector('#consultor-status-filters .filter-btn-active');
@@ -2267,6 +2504,26 @@ function renderAtivos(data = ativosData) {
         const rhSubFormIds = ['ferias-form', 'atestados-form', 'epis-form', 'ativos-form'];
         
         switch (form.id) {
+            case 'validade-form':
+    id = form.dataset.id;
+    endpoint = id ? `Validades/${id}` : 'Validades';
+    body = {
+        Validade: form.querySelector('#validade-data').value,
+        Tipo: form.querySelector('#validade-tipo-form').value,
+        Status: form.querySelector('#validade-status-form').value,
+        Observacao: form.querySelector('#validade-observacao').value
+    };
+    const consultorIdValidade = parseInt(form.querySelector('#validade-consultor').value);
+    const clienteIdValidade = parseInt(form.querySelector('#validade-cliente').value);
+    if (id) {
+        body.Consultores_id = consultorIdValidade;
+        body.Clientes_id = clienteIdValidade;
+    } else {
+        body.Consultores = { "Id": consultorIdValidade };
+        body.Clientes = { "Id": clienteIdValidade };
+    }
+    callback = async () => { await fetchValidades(); applyAndRenderValidades(); };
+    break;
             case 'reembolso-form':
     id = form.dataset.id;
     endpoint = id ? `Reembolsos/${id}` : 'Reembolsos';
@@ -2633,6 +2890,10 @@ case 'doc-form':
         let endpoint = '', callback = null;
         switch(type) {
             case 'receita': endpoint = `Receitas/${id}`; callback = async () => { await fetchReceitas(); applyAndRenderReceitas(); }; break;
+            case 'validade': 
+    endpoint = `Validades/${id}`; 
+    callback = async () => { await fetchValidades(); applyAndRenderValidades(); }; 
+    break;
             case 'custo': endpoint = `Custos/${id}`; callback = async () => { await fetchCustos(); applyAndRenderCustos(); }; break;
             case 'visita': endpoint = `Visitas/${id}`; callback = async () => { await fetchVisitas(); applyFilters(); }; break;
             case 'consultor': endpoint = `Consultores/${id}`; callback = async () => { await fetchConsultores(); renderConsultores(); }; break;
@@ -3232,6 +3493,21 @@ function handleTableEdit(btn) {
         case 'visita': { const v = visitsData.find(d => d.Id === id); if (v) openVisitaModal(v); break; }
         case 'receita': { const r = receitasData.find(d => d.Id === id); if (r) { setupSubFormToggle('receitas-history-container', 'receita-form-container'); const f = document.getElementById('receita-form'); f.dataset.id = r.Id; f.querySelector('#receita-cliente-form').value = r.Clientes?.Id; f.querySelector('#receita-vencimento').value = r.Vencimento; f.querySelector('#receita-valor').value = r.Valor; f.querySelector('#receita-status-form').value = r.Status; f.querySelector('#receita-obs').value = r.Observacao || ''; } break; }
         case 'custo': { const c = custosData.find(d => d.Id === id); if (c) { setupSubFormToggle('custos-history-container', 'custo-form-container'); const f = document.getElementById('custo-form'); f.dataset.id = c.Id; f.querySelector('#custo-credor').value = c.Credor; f.querySelector('#custo-vencimento').value = c.Vencimento; f.querySelector('#custo-valor').value = c.Valor; f.querySelector('#custo-status-form').value = c.Status; f.querySelector('#custo-obs').value = c.Observacao || ''; } break; }
+        case 'validade': { 
+    const v = validadesData.find(d => d.Id === id); 
+    if (v) { 
+        setupSubFormToggle('validades-history-container', 'validade-form-container'); 
+        const f = document.getElementById('validade-form');
+        f.dataset.id = v.Id; 
+        f.querySelector('#validade-cliente').value = v.Clientes?.Id;
+        f.querySelector('#validade-consultor').value = v.Consultores?.Id;
+        f.querySelector('#validade-tipo-form').value = v.Tipo;
+        f.querySelector('#validade-data').value = v.Validade;
+        f.querySelector('#validade-status-form').value = v.Status;
+        f.querySelector('#validade-observacao').value = v.Observacao || '';
+    } 
+    break; 
+}
         case 'ferias': { const data = feriasData.find(d => d.Id === id); if (data) { setupSubFormToggle('ferias-history-container', 'ferias-form-container'); const form = document.getElementById('ferias-form'); form.dataset.id = data.Id; form.querySelector('#ferias-consultor').value = data.Consultores?.Id; form.querySelector('#ferias-inicio').value = data.DataInicio; form.querySelector('#ferias-retorno').value = data.DataRetorno; } break; }
         case 'atestado': { const data = atestadosData.find(d => d.Id === id); if (data) { setupSubFormToggle('atestados-history-container', 'atestados-form-container'); const form = document.getElementById('atestados-form'); form.dataset.id = data.Id; form.querySelector('#atestados-consultor').value = data.Consultores?.Id; form.querySelector('#atestados-inicio').value = data.DataInicio; form.querySelector('#atestados-retorno').value = data.DataRetorno; } break; }
         case 'epi': { const data = episEntreguesData.find(d => d.Id === id); if (data) { setupSubFormToggle('epis-history-container', 'epis-form-container'); const form = document.getElementById('epis-form'); form.dataset.id = data.Id; form.querySelector('#epis-consultor').value = data.Consultores?.Id; form.querySelector('#epis-item').value = data.Item; form.querySelector('#epis-qtd').value = data.Quantidade; form.querySelector('#epis-data').value = data.DataEntrega; form.querySelector('#epis-obs').value = data.Observacao || ''; } break; }
@@ -3367,6 +3643,7 @@ if (typesWithoutActions.includes(type)) {
     switch (type) {
         case 'visita': dataArray = visitsData; title = 'Detalhes da Visita'; break;
         case 'receita': dataArray = receitasData; title = 'Detalhes da Receita'; break;
+        case 'validade': dataArray = validadesData; title = 'Detalhes da Validade'; break;
         case 'custo': dataArray = custosData; title = 'Detalhes do Custo'; break;
         case 'ferias': dataArray = feriasData; title = 'Detalhes das Férias'; break;
         case 'atestado': dataArray = atestadosData; title = 'Detalhes do Atestado'; break;
@@ -4524,6 +4801,30 @@ function generateInsights() {
 
     // --- Inicialização ---
     function initializeApp() {
+        ['filter-validade-start-date', 'filter-validade-end-date', 'filter-validade-consultor', 'filter-validade-cliente', 'filter-validade-status', 'filter-validade-tipo'].forEach(id => {
+        document.getElementById(id)?.addEventListener('change', applyAndRenderValidades);
+    });
+
+    // Adicione o listener para os cliques nas abas de "Validades"
+    document.getElementById('validades-tabs')?.addEventListener('click', e => {
+        if(e.target.classList.contains('validades-tab-btn')) {
+            // Remove a classe ativa de todos os botões da aba
+            document.querySelectorAll('.validades-tab-btn').forEach(btn => {
+                btn.classList.remove('border-brand-gold', 'text-brand-gold');
+                btn.classList.add('border-transparent');
+            });
+            // Adiciona a classe ativa ao botão clicado
+            e.target.classList.add('border-brand-gold', 'text-brand-gold');
+
+            // Esconde todos os conteúdos das abas
+            document.querySelectorAll('.validades-tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            // Mostra o conteúdo correspondente
+            document.getElementById(e.target.dataset.target)?.classList.remove('hidden');
+        }
+    });
+document.getElementById('show-validade-form')?.addEventListener('click', () => setupSubFormToggle('validades-history-container', 'validade-form-container'));
         ['filter-reembolso-start-date', 'filter-reembolso-end-date', 'filter-reembolso-consultor', 'filter-reembolso-status'].forEach(id => {
     document.getElementById(id)?.addEventListener('change', applyAndRenderReembolsos);
 });
