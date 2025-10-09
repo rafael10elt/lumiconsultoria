@@ -144,8 +144,9 @@ body {
                     <a href="#" class="nav-link flex items-center justify-center w-12 h-12 mb-4 rounded-lg text-gray-400 hover:bg-brand-gold hover:text-white" data-target="financeiro" title="Financeiro"><i class="fas fa-wallet"></i></a>
                     <a href="#" class="nav-link flex items-center justify-center w-12 h-12 mb-4 rounded-lg text-gray-400 hover:bg-brand-gold hover:text-white" data-target="clientes" title="Clientes"><i class="fas fa-handshake"></i></a>
                     <a href="#" class="nav-link flex items-center justify-center w-12 h-12 mb-4 rounded-lg text-gray-400 hover:bg-brand-gold hover:text-white" data-target="rh" title="RH"><i class="fas fa-briefcase"></i></a>
-                </nav>
-            </aside>
+                    <a href="#" class="nav-link flex items-center justify-center w-12 h-12 mb-4 rounded-lg text-gray-400 hover:bg-brand-gold hover:text-white" data-target="reembolsos" title="Reembolsos"><i class="fas fa-receipt"></i></a>
+            </nav>
+        </aside>
             <!-- Overlay for mobile sidebar -->
             <div id="sidebar-overlay" class="fixed inset-0 z-20 bg-black bg-opacity-50 hidden lg:hidden"></div>
 
@@ -832,7 +833,102 @@ body {
                             </div>
                         </div>
                     </div>
+<div id="reembolsos" class="page hidden">
+    <div class="mb-4">
+        <h2 class="text-3xl font-bold text-gray-800 dark:text-white">Reembolsos</h2>
+        <p class="text-gray-600 dark:text-gray-300">Gerenciamento de solicitações de reembolso.</p>
+    </div>
 
+    <div class="flex justify-end items-center mb-4">
+        <button id="show-reembolso-form" class="bg-brand-gold text-white px-4 py-2 rounded-lg shadow hover:bg-brand-gold-dark transition-colors">Novo Reembolso</button>
+    </div>
+
+    <div id="reembolsos-history-container">
+        <!-- Filtros -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4 p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+            <div>
+                <label for="filter-reembolso-start-date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">De</label>
+                <input type="date" id="filter-reembolso-start-date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600">
+            </div>
+            <div>
+                <label for="filter-reembolso-end-date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Até</label>
+                <input type="date" id="filter-reembolso-end-date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600">
+            </div>
+            <!-- Filtro de Consultor visível apenas para Admin -->
+            <div id="filter-reembolso-consultor-wrapper"> 
+                <label for="filter-reembolso-consultor" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Consultor</label>
+                <select id="filter-reembolso-consultor" class="consultor-select bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600"></select>
+            </div>
+            <div>
+                <label for="filter-reembolso-status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+                <select id="filter-reembolso-status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600">
+                    <option value="">Todos</option>
+                    <option value="Pendente">Pendente</option>
+                    <option value="Pago">Pago</option>
+                    <option value="Recusado">Recusado</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Tabela para Desktop -->
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg hidden md:block">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-300">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Consultor</th>
+                        <th scope="col" class="px-6 py-3">Data</th>
+                        <th scope="col" class="px-6 py-3">Valor</th>
+                        <th scope="col" class="px-6 py-3">Status</th>
+                        <th scope="col" class="px-6 py-3">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="reembolsos-table-body"></tbody>
+            </table>
+        </div>
+        <!-- Cards para Mobile -->
+        <div id="reembolsos-cards-container" class="grid grid-cols-1 gap-4 md:hidden"></div>
+    </div>
+
+    <!-- Formulário de Novo/Edição Reembolso -->
+    <div id="reembolso-form-container" class="hidden mt-6 p-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
+        <h3 class="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Solicitar Reembolso</h3>
+        <form id="reembolso-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label for="reembolso-consultor" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Consultor</label>
+                <select id="reembolso-consultor" class="consultor-select bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600" required></select>
+            </div>
+            <div>
+                <label for="reembolso-data" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Data</label>
+                <input type="date" id="reembolso-data" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600" required>
+            </div>
+            <div>
+                <label for="reembolso-valor" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Valor (R$)</label>
+                <input type="number" id="reembolso-valor" step="0.01" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600" required>
+            </div>
+            <div id="reembolso-status-wrapper">
+    <label for="reembolso-status-form" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+    <select id="reembolso-status-form" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600">
+        <option value="Pendente">Pendente</option>
+        <option value="Pago">Pago</option>
+        <option value="Recusado">Recusado</option>
+    </select>
+</div>
+             <div class="md:col-span-2">
+                <label for="reembolso-motivo" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Motivo / Descrição</label>
+                <textarea id="reembolso-motivo" rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-brand-gold focus:border-brand-gold dark:bg-gray-700 dark:border-gray-600" required></textarea>
+            </div>
+            <div class="md:col-span-2">
+                <label for="reembolso-anexo" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Anexar Comprovante</label>
+                <input type="file" id="reembolso-anexo" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400">
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-300">Deixe em branco se não quiser alterar o anexo existente.</p>
+            </div>
+            <div class="md:col-span-2 flex justify-end space-x-4">
+                <button type="button" class="cancel-sub-form px-6 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600" data-form="reembolso-form-container" data-history="reembolsos-history-container">Cancelar</button>
+                <button type="submit" class="px-6 py-2 text-sm font-medium text-white bg-brand-gold rounded-md hover:bg-brand-gold-dark">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
                 </main>
             </div>
         </div>
@@ -1153,6 +1249,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let requisicoesItensData = []; 
     let itemsParaAdicionar = [];
     let clienteDocsData = [];
+    let reembolsosData = [];
 
      const GLOBAL_LABEL_MAP = {
         // Campos de Consultor e Cliente
@@ -1194,6 +1291,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ativosdoconsultor:'Total de Ativos',
         episdoconsultor:'Total de EPIs',
         requisicoesdoconsultor:'Total de Requisições',
+        motivo: 'Motivo do Reembolso',
     };
 
     // --- Variáveis de Estado da UI ---
@@ -1530,7 +1628,7 @@ function renderModalCatalogoGrid(category = 'Todos') {
     // --- Funções de Carregamento de Dados (Fetch) ---
 async function fetchAllData() {
     showLoadingOverlay('Carregando dados...');
-    await Promise.all([ fetchConsultores(), fetchClientes(), fetchCustos(), fetchItensCatalogo(), fetchClienteDocs() ]);
+    await Promise.all([ fetchConsultores(), fetchClientes(), fetchCustos(), fetchItensCatalogo(), fetchClienteDocs(), fetchReembolsos() ]);
     await Promise.all([ fetchVisitas(), fetchReceitas(), fetchRequisicoes(), fetchFerias(), fetchAtestados(), fetchEpis(), fetchAtivos(), fetchRequisicoesItens() ]);
     
     renderConsultores();
@@ -1567,6 +1665,7 @@ async function fetchAllData() {
     
     applyAndRenderReceitas();
     applyAndRenderCustos();
+    applyAndRenderReembolsos();
     applyAndRenderFerias();
     applyAndRenderAtestados();
     applyAndRenderEpis();
@@ -1620,7 +1719,10 @@ async function fetchRequisicoesItens() {
         const result = await nocoFetch('Clientes_Docs?nested[all]=true'); 
         if(result && result.list) clienteDocsData = result.list; else clienteDocsData = []; 
     }
-
+async function fetchReembolsos() { 
+    const result = await nocoFetch('Reembolsos?nested[all]=true'); 
+    if(result && result.list) reembolsosData = result.list; else reembolsosData = []; 
+}
     // --- Lógica de Autenticação e Sessão ---
     async function handleLogin(e) { e.preventDefault(); const username = document.getElementById('username').value, password = document.getElementById('password').value; if (!username || !password) { alert('Por favor, preencha usuário e senha.'); return; } showLoadingOverlay('Autenticando...'); const user = await authenticateUser(username, password); if (user) { sessionStorage.setItem('loggedInUser', JSON.stringify(user)); await initializeUserSession(user); } else { hideLoadingOverlay(); alert('Usuário ou senha inválidos.'); } }
  async function initializeUserSession(user) {
@@ -1706,9 +1808,9 @@ async function fetchRequisicoesItens() {
         });
     } else {
         if (loggedInUser.Role === 'Gestor') {
-            allowedPages = ['visitas', 'requisicao','clientes'];
+            allowedPages = ['visitas', 'requisicao','clientes','reembolsos'];
         } else if (loggedInUser.Role === 'Consultor') {
-            allowedPages = ['visitas', 'requisicao','clientes'];
+            allowedPages = ['visitas', 'requisicao','clientes','reembolsos'];
         }
 
         // Aplica o filtro de páginas para Gestor e Consultor
@@ -1857,7 +1959,59 @@ function createClienteCard(c) {
                     ${actionIconsHTML}
                 </div> 
             </div>`; 
-}    
+}   
+ function renderReembolsos(data = reembolsosData) {
+    const tbody = document.getElementById('reembolsos-table-body');
+    const cardsContainer = document.getElementById('reembolsos-cards-container');
+    if (!tbody || !cardsContainer) return;
+
+    tbody.innerHTML = '';
+    cardsContainer.innerHTML = '';
+
+    const getStatusClass = (status) => {
+        switch (status) {
+            case 'Pago': return 'bg-green-200 text-green-800';
+            case 'Pendente': return 'bg-yellow-200 text-yellow-800';
+            case 'Recusado': return 'bg-red-200 text-red-800';
+            default: return 'bg-gray-200 text-gray-800';
+        }
+    };
+
+    data.forEach(r => {
+        const statusClass = getStatusClass(r.Status);
+        const canEditOrDelete = loggedInUser.Role === 'Admin' || (r.Status === 'Pendente' && r.Consultores?.Id == loggedInUser.Id);
+        
+        let actionsHTML = `<button class="table-details-btn text-gray-500" data-type="reembolso" title="Ver Detalhes"><i class="fas fa-eye"></i></button>`;
+        if (canEditOrDelete) {
+            actionsHTML += `<button class="table-edit-btn text-blue-500" data-type="reembolso" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="table-delete-btn text-red-500" data-type="reembolso" title="Apagar"><i class="fas fa-trash"></i></button>`;
+        }
+
+        // Tabela Desktop
+        tbody.innerHTML += `
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" data-id="${r.Id}">
+                <td class="px-6 py-4">${r.Consultores?.Nome || 'N/A'}</td>
+                <td class="px-6 py-4">${new Date(r.Data + 'T00:00:00').toLocaleDateString('pt-BR')}</td>
+                <td class="px-6 py-4">${(r.Valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                <td class="px-6 py-4"><span class="text-xs font-semibold px-2 py-0.5 rounded-full ${statusClass}">${r.Status}</span></td>
+                <td class="px-6 py-4 space-x-2">${actionsHTML}</td>
+            </tr>`;
+
+        // Card Mobile
+        cardsContainer.innerHTML += `
+            <div class="p-4 bg-white rounded-lg shadow dark:bg-gray-800 border dark:border-gray-700" data-id="${r.Id}">
+                <div class="flex justify-between items-start">
+                    <p class="text-lg font-semibold text-gray-900 dark:text-white">${r.Consultores?.Nome || 'N/A'}</p>
+                    <span class="text-xs font-semibold px-2 py-0.5 rounded-full ${statusClass}">${r.Status}</span>
+                </div>
+                <div class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    <p><strong>Data:</strong> ${new Date(r.Data + 'T00:00:00').toLocaleDateString('pt-BR')}</p>
+                    <p><strong>Valor:</strong> ${(r.Valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                </div>
+                <div class="flex justify-end pt-2 mt-2 border-t dark:border-gray-600 space-x-2">${actionsHTML}</div>
+            </div>`;
+    });
+}
     function renderReceitas(data = receitasData) {
     const tbody = document.getElementById('receitas-table-body');
     const cardsContainer = document.getElementById('receitas-cards-container');
@@ -2112,6 +2266,35 @@ function renderAtivos(data = ativosData) {
         const rhSubFormIds = ['ferias-form', 'atestados-form', 'epis-form', 'ativos-form'];
         
         switch (form.id) {
+            case 'reembolso-form':
+    id = form.dataset.id;
+    endpoint = id ? `Reembolsos/${id}` : 'Reembolsos';
+    body = {
+        Data: form.querySelector('#reembolso-data').value,
+        Valor: parseFloat(form.querySelector('#reembolso-valor').value),
+        Motivo: form.querySelector('#reembolso-motivo').value,
+        Status: form.querySelector('#reembolso-status-form').value,
+    };
+    const consultorIdReembolso = parseInt(form.querySelector('#reembolso-consultor').value);
+    if (id) {
+        body.Consultores_id = consultorIdReembolso;
+    } else {
+        body.Consultores = { "Id": consultorIdReembolso };
+    }
+
+    const anexoInput = form.querySelector('#reembolso-anexo');
+    if (anexoInput && anexoInput.files[0]) {
+        showLoadingOverlay('Enviando anexo...');
+        const anexoData = await uploadFile('Reembolsos', 'Anexo', anexoInput.files[0]);
+        if (anexoData) {
+            body.Anexo = [anexoData];
+        } else {
+            hideLoadingOverlay();
+            return;
+        }
+    }
+    callback = async () => { await fetchReembolsos(); applyAndRenderReembolsos(); };
+    break;
             case 'item-form':
                 id = form.dataset.id;
                 endpoint = id ? `Itens_Catalogo/${id}` : 'Itens_Catalogo';
@@ -2453,7 +2636,11 @@ case 'doc-form':
             case 'visita': endpoint = `Visitas/${id}`; callback = async () => { await fetchVisitas(); applyFilters(); }; break;
             case 'consultor': endpoint = `Consultores/${id}`; callback = async () => { await fetchConsultores(); renderConsultores(); }; break;
             case 'cliente': endpoint = `Clientes/${id}`; callback = async () => { await fetchClientes(); renderClientes(); }; break;
-             case 'cliente_doc': 
+            case 'reembolso': 
+    endpoint = `Reembolsos/${id}`; 
+    callback = async () => { await fetchReembolsos(); applyAndRenderReembolsos(); }; 
+    break;
+            case 'cliente_doc': 
                 endpoint = `Clientes_Docs/${id}`; 
                 callback = async () => { 
                     await fetchClienteDocs(); 
@@ -3048,6 +3235,20 @@ function handleTableEdit(btn) {
         case 'atestado': { const data = atestadosData.find(d => d.Id === id); if (data) { setupSubFormToggle('atestados-history-container', 'atestados-form-container'); const form = document.getElementById('atestados-form'); form.dataset.id = data.Id; form.querySelector('#atestados-consultor').value = data.Consultores?.Id; form.querySelector('#atestados-inicio').value = data.DataInicio; form.querySelector('#atestados-retorno').value = data.DataRetorno; } break; }
         case 'epi': { const data = episEntreguesData.find(d => d.Id === id); if (data) { setupSubFormToggle('epis-history-container', 'epis-form-container'); const form = document.getElementById('epis-form'); form.dataset.id = data.Id; form.querySelector('#epis-consultor').value = data.Consultores?.Id; form.querySelector('#epis-item').value = data.Item; form.querySelector('#epis-qtd').value = data.Quantidade; form.querySelector('#epis-data').value = data.DataEntrega; form.querySelector('#epis-obs').value = data.Observacao || ''; } break; }
         case 'ativo': { const data = ativosData.find(d => d.Id === id); if (data) { setupSubFormToggle('ativos-history-container', 'ativos-form-container'); const form = document.getElementById('ativos-form'); form.dataset.id = data.Id; form.querySelector('#ativos-consultor').value = data.Consultores?.Id; form.querySelector('#ativos-item').value = data.Item; form.querySelector('#ativos-entrega').value = data.DataEntrega; form.querySelector('#ativos-devolucao').value = data.DataDevolucao || ''; form.querySelector('#ativos-obs').value = data.Observacao || ''; } break; }
+    case 'reembolso': { 
+    const r = reembolsosData.find(d => d.Id === id); 
+    if (r) { 
+        setupSubFormToggle('reembolsos-history-container', 'reembolso-form-container'); 
+        const f = document.getElementById('reembolso-form');
+        f.dataset.id = r.Id; 
+        f.querySelector('#reembolso-consultor').value = r.Consultores?.Id;
+        f.querySelector('#reembolso-data').value = r.Data;
+        f.querySelector('#reembolso-valor').value = r.Valor;
+        f.querySelector('#reembolso-status-form').value = r.Status;
+        f.querySelector('#reembolso-motivo').value = r.Motivo || '';
+    } 
+    break; 
+}
     }
 }
     function handleCardEdit() { if (!activeCard) return; hideModal(allElements.detailsModal); const isConsultor = activeCard.classList.contains('rh-card'); const formContainerId = isConsultor ? 'rh-form-container' : 'cliente-form-container'; const cardsContainerId = isConsultor ? 'rh-cards-container' : 'cliente-cards-container'; const form = document.getElementById(formContainerId).querySelector('form'); const data = activeCard.dataset; form.reset(); let hiddenIdInput = form.querySelector('input[type="hidden"]'); if (!hiddenIdInput) { hiddenIdInput = document.createElement('input'); hiddenIdInput.type = 'hidden'; hiddenIdInput.id = isConsultor ? 'rh-id' : 'cliente-id'; form.prepend(hiddenIdInput); } hiddenIdInput.value = data.id;  const fieldMapping = isConsultor 
@@ -3171,6 +3372,7 @@ if (typesWithoutActions.includes(type)) {
         case 'epi': dataArray = episEntreguesData; title = 'Detalhes da Entrega de EPI'; break;
         case 'ativo': dataArray = ativosData; title = 'Detalhes do Ativo'; break;
         case 'requisicao': dataArray = requisicoesData; title = 'Detalhes da Requisição'; break;
+        case 'reembolso': dataArray = reembolsosData; title = 'Detalhes do Reembolso'; break;
         default: return;
     }
     const data = dataArray.find(d => d.Id === id);
@@ -3302,6 +3504,55 @@ if (typesWithoutActions.includes(type)) {
     
     document.getElementById('modal-content').innerHTML = contentHTML;
     showModal(allElements.detailsModal);
+}
+function openReembolsoModal(reembolso = null) {
+    const form = document.getElementById('reembolso-form');
+    const consultorSelect = form.querySelector('#reembolso-consultor');
+    const statusSelect = form.querySelector('#reembolso-status-form');
+    const statusWrapper = document.getElementById('reembolso-status-wrapper');
+
+    // --- INÍCIO DA CORREÇÃO ---
+
+    // 1. PRIMEIRO, mostra e reseta o formulário. Isso é crucial.
+    setupSubFormToggle('reembolsos-history-container', 'reembolso-form-container');
+    
+    // 2. AGORA, com o formulário limpo e visível, populamos o select.
+    consultorSelect.innerHTML = '<option value="">Selecione...</option>'; // Limpa opções antigas
+    consultoresData.forEach(consultor => {
+        const option = document.createElement('option');
+        option.value = consultor.Id;
+        option.textContent = consultor.Nome;
+        consultorSelect.appendChild(option);
+    });
+
+    // 3. Preenche os dados se for uma edição
+    if (reembolso) {
+        form.dataset.id = reembolso.Id;
+        consultorSelect.value = reembolso.Consultores?.Id;
+        form.querySelector('#reembolso-data').value = reembolso.Data;
+        form.querySelector('#reembolso-valor').value = reembolso.Valor;
+        statusSelect.value = reembolso.Status;
+        form.querySelector('#reembolso-motivo').value = reembolso.Motivo || '';
+    } else {
+        // Define a data de hoje como padrão para novos reembolsos
+        form.querySelector('#reembolso-data').value = new Date().toISOString().slice(0, 10);
+    }
+
+    // 4. POR ÚLTIMO, aplicamos as regras de permissão, que irão sobrescrever o necessário.
+    if (loggedInUser.Role !== 'Admin') {
+        // Para Gestor e Consultor:
+        consultorSelect.value = loggedInUser.Id; // Define o valor para o ID do usuário logado
+        consultorSelect.disabled = true;         // Desabilita o campo
+        statusWrapper.style.display = 'none';    // Esconde o campo de Status
+        if (!reembolso) { // Garante que novos reembolsos sejam sempre 'Pendente'
+             statusSelect.value = 'Pendente';
+        }
+    } else {
+        // Para Admin:
+        consultorSelect.disabled = false;        // Habilita o campo de consultor
+        statusWrapper.style.display = 'block';   // Garante que o campo de Status esteja visível
+    }
+    // --- FIM DA CORREÇÃO ---
 }
 // --- NOVAS FUNÇÕES PARA GERENCIAR DOCUMENTOS ---
 
@@ -4165,7 +4416,31 @@ function applyRequisicaoFilters(){
     function applyAndRenderAtivos(){ const nome = document.getElementById('ativos-filter-name').value.toLowerCase(); const inicio = document.getElementById('ativos-filter-start').value; const fim = document.getElementById('ativos-filter-end').value; const filtered = ativosData.filter(a => (!nome || (a.Consultores?.Nome || '').toLowerCase().includes(nome)) && (!inicio || a.DataEntrega >= inicio) && (!fim || a.DataEntrega <= fim) ); renderAtivos(filtered); }
     function applyAndRenderReceitas(){const s=document.getElementById('filter-receita-start-date').value,e=document.getElementById('filter-receita-end-date').value,c=document.getElementById('filter-receita-cliente').value,st=document.getElementById('filter-receita-status').value; const f=receitasData.filter(r=>(!s||r.Vencimento>=s)&&(!e||r.Vencimento<=e)&&(!c||r.Clientes?.Id==c)&&(!st||r.Status===st)); renderReceitas(f);}
     function applyAndRenderCustos(){const s=document.getElementById('filter-custo-start-date').value,e=document.getElementById('filter-custo-end-date').value,cr=document.getElementById('filter-custo-credor').value.toLowerCase(),st=document.getElementById('filter-custo-status').value; const f=custosData.filter(c=>(!s||c.Vencimento>=s)&&(!e||c.Vencimento<=e)&&(!cr||c.Credor.toLowerCase().includes(cr))&&(!st||c.Status===st)); renderCustos(f);}
+    function applyAndRenderReembolsos() {
+    const startDate = document.getElementById('filter-reembolso-start-date').value;
+    const endDate = document.getElementById('filter-reembolso-end-date').value;
+    const consultorId = document.getElementById('filter-reembolso-consultor').value;
+    const status = document.getElementById('filter-reembolso-status').value;
     
+    let baseData = reembolsosData;
+
+    // Regra de permissão: Filtra os dados ANTES de aplicar os filtros da tela
+    if (loggedInUser.Role !== 'Admin') {
+        baseData = reembolsosData.filter(r => r.Consultores?.Id == loggedInUser.Id);
+        // Esconde o filtro de consultor para não-admins
+        document.getElementById('filter-reembolso-consultor-wrapper').style.display = 'none';
+    } else {
+        document.getElementById('filter-reembolso-consultor-wrapper').style.display = 'block';
+    }
+
+    const filtered = baseData.filter(r =>
+        (!startDate || r.Data >= startDate) &&
+        (!endDate || r.Data <= endDate) &&
+        (!consultorId || r.Consultores?.Id == consultorId) &&
+        (!status || r.Status === status)
+    );
+    renderReembolsos(filtered);
+}
 function generateInsights() {
         const f = v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         const insightsContent = document.getElementById('insights-content');
@@ -4248,6 +4523,10 @@ function generateInsights() {
 
     // --- Inicialização ---
     function initializeApp() {
+        ['filter-reembolso-start-date', 'filter-reembolso-end-date', 'filter-reembolso-consultor', 'filter-reembolso-status'].forEach(id => {
+    document.getElementById(id)?.addEventListener('change', applyAndRenderReembolsos);
+});
+document.getElementById('show-reembolso-form')?.addEventListener('click', () => openReembolsoModal(null));
         ['dash-cos-status', 'dash-cos-credor', 'dash-cos-start', 'dash-cos-end'].forEach(id => document.getElementById(id)?.addEventListener('input', updateCustosDashboard));
         ['dash-rec-status', 'dash-rec-cliente', 'dash-rec-start', 'dash-rec-end'].forEach(id => document.getElementById(id)?.addEventListener('change', updateReceitasDashboard));
         document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
