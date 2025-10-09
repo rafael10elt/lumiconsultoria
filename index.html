@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lumi Consultoria</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" href="/images/LogoLumi.png" type="image/png">
+    <link rel="icon" href="images/LogoLumi.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
@@ -113,7 +113,7 @@ body {
             <div class="flex flex-col items-center">
     <div class="flex flex-col items-center mb-4">
   <div class="logo-symbol">
-    <img src="/images/LogoLumi.png" alt="Logo Lumitech" class="w-20 h-20 object-contain mr-3 ml-8">
+    <img src="images/LogoLumi.png" alt="Logo Lumitech" class="w-20 h-20 object-contain mr-3 ml-8">
   </div>
   <div class="text-center">
     <h1 class="text-3xl font-bold text-brand-dark dark:text-gray-200">LUMI</h1>
@@ -135,7 +135,7 @@ body {
         <div class="flex h-screen bg-gray-100 dark:bg-gray-900">
             <aside id="sidebar" class="absolute z-30 flex-col items-center w-20 text-white transform -translate-x-full lg:relative lg:flex lg:translate-x-0 transition-transform duration-200 ease-in-out bg-brand-dark dark:bg-gray-800">
                 <div class="logo-symbol">
-                <img src="/images/LogoLumi.png" alt="Logo Lumitech" style="width: 58px; height: 50px; object-fit: contain; position: absolute; left: 18px; top: 15px; z-index: 2; pointer-events: none;" />
+                <img src="images/LogoLumi.png" alt="Logo Lumitech" style="width: 58px; height: 50px; object-fit: contain; position: absolute; left: 18px; top: 15px; z-index: 2; pointer-events: none;" />
                </div>
                 <nav class="flex-1 mt-6">
                     <a href="#" class="nav-link flex items-center justify-center w-12 h-12 mb-4 rounded-lg bg-brand-gold text-white" data-target="dashboard" title="Dashboard"><i class="fas fa-chart-pie"></i></a>
@@ -907,7 +907,7 @@ body {
             </div>
         </div>
     </div>
-    <div id="delete-confirm-modal" class="fixed inset-0 z-50 items-center justify-center hidden bg-black bg-opacity-60 modal-bg-animate">
+    <div id="delete-confirm-modal" class="fixed inset-0 z-[70] items-center justify-center hidden bg-black bg-opacity-60 modal-bg-animate">
         <div class="w-full max-w-sm p-6 mx-4 bg-white rounded-lg shadow-lg dark:bg-gray-800 modal-content-animate">
             <h2 class="text-xl font-bold text-gray-900 dark:text-white">Confirmar Exclusão</h2>
             <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Você tem certeza que deseja apagar este registro? Esta ação não pode ser desfeita.</p>
@@ -1022,6 +1022,66 @@ body {
             </form>
         </div>
     </div>
+
+    <div id="cliente-docs-modal" class="fixed inset-0 z-50 items-center justify-center hidden bg-black bg-opacity-60 modal-bg-animate">
+    <div class="w-full max-w-2xl p-6 mx-4 bg-white rounded-lg shadow-lg dark:bg-gray-800 modal-content-animate max-h-[90vh] flex flex-col">
+        <div class="flex justify-between items-center border-b pb-3 dark:border-gray-700">
+            <h2 id="cliente-docs-modal-title" class="text-2xl font-bold text-gray-900 dark:text-white">Documentos do Cliente</h2>
+            <button id="close-cliente-docs-modal" class="text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white text-3xl leading-none">&times;</button>
+        </div>
+        
+        <div class="flex-grow overflow-y-auto mt-4">
+            <div id="cliente-docs-table-container" class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Documento</th>
+                            <th scope="col" class="px-6 py-3">Anexo</th>
+                            <th scope="col" class="px-6 py-3">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cliente-docs-table-body">
+                        <!-- Linhas da tabela serão inseridas aqui via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="flex justify-end mt-6 pt-4 border-t dark:border-gray-700">
+            <button id="show-doc-form-btn" class="bg-brand-gold text-white px-4 py-2 rounded-lg shadow hover:bg-brand-gold-dark transition-colors">Adicionar Documento</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Secundário para Adicionar/Editar Documento -->
+<div id="doc-form-modal" class="fixed inset-0 z-[60] items-center justify-center hidden bg-black bg-opacity-60 modal-bg-animate">
+    <div class="w-full max-w-lg p-6 mx-4 bg-white rounded-lg shadow-lg dark:bg-gray-800 modal-content-animate">
+        <h2 id="doc-form-modal-title" class="text-xl font-bold text-gray-900 dark:text-white mb-4">Novo Documento</h2>
+        <form id="doc-form">
+            <input type="hidden" id="doc-id">
+            <input type="hidden" id="doc-cliente-id">
+            <div class="space-y-4">
+                <div>
+                    <label for="doc-nome" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nome do Documento</label>
+                    <input type="text" id="doc-nome" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600" required>
+                </div>
+                <div>
+    <label for="doc-data" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Data do Documento</label>
+    <input type="date" id="doc-data" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600" required>
+</div>
+                <div>
+                    <label for="doc-anexo" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Anexar Arquivo</label>
+                    <input type="file" id="doc-anexo" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400">
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-300">Deixe em branco se não quiser alterar o anexo existente.</p>
+                </div>
+            </div>
+             <div class="flex justify-end mt-6 space-x-4">
+                <button type="button" id="cancel-doc-form" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600">Cancelar</button>
+                <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-brand-gold rounded-md hover:bg-brand-gold-dark">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
 <div id="requisicao-item-form-modal" class="fixed inset-0 z-50 items-center justify-center hidden bg-black bg-opacity-60 modal-bg-animate">
         <div class="w-full max-w-3xl p-6 mx-4 bg-white rounded-lg shadow-lg dark:bg-gray-800 modal-content-animate max-h-[90vh] flex flex-col">
             <h2 id="requisicao-item-modal-title" class="text-xl font-bold text-gray-900 dark:text-white mb-4">Adicionar Itens à Requisição</h2>
@@ -1092,6 +1152,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let loggedInUser = null;
     let requisicoesItensData = []; 
     let itemsParaAdicionar = [];
+    let clienteDocsData = [];
 
      const GLOBAL_LABEL_MAP = {
         // Campos de Consultor e Cliente
@@ -1469,7 +1530,7 @@ function renderModalCatalogoGrid(category = 'Todos') {
     // --- Funções de Carregamento de Dados (Fetch) ---
 async function fetchAllData() {
     showLoadingOverlay('Carregando dados...');
-    await Promise.all([ fetchConsultores(), fetchClientes(), fetchCustos(), fetchItensCatalogo() ]);
+    await Promise.all([ fetchConsultores(), fetchClientes(), fetchCustos(), fetchItensCatalogo(), fetchClienteDocs() ]);
     await Promise.all([ fetchVisitas(), fetchReceitas(), fetchRequisicoes(), fetchFerias(), fetchAtestados(), fetchEpis(), fetchAtivos(), fetchRequisicoesItens() ]);
     
     renderConsultores();
@@ -1555,7 +1616,11 @@ async function fetchRequisicoesItens() {
     async function fetchAtestados() { const result = await nocoFetch('Atestados?nested[all]=true'); if(result && result.list) atestadosData = result.list; else atestadosData = []; }
     async function fetchEpis() { const result = await nocoFetch('Epis_Entregues?nested[all]=true'); if(result && result.list) episEntreguesData = result.list; else episEntreguesData = []; }
     async function fetchAtivos() { const result = await nocoFetch('Ativos_Entregues?nested[all]=true'); if(result && result.list) ativosData = result.list; else ativosData = []; }
-    
+    async function fetchClienteDocs() { 
+        const result = await nocoFetch('Clientes_Docs?nested[all]=true'); 
+        if(result && result.list) clienteDocsData = result.list; else clienteDocsData = []; 
+    }
+
     // --- Lógica de Autenticação e Sessão ---
     async function handleLogin(e) { e.preventDefault(); const username = document.getElementById('username').value, password = document.getElementById('password').value; if (!username || !password) { alert('Por favor, preencha usuário e senha.'); return; } showLoadingOverlay('Autenticando...'); const user = await authenticateUser(username, password); if (user) { sessionStorage.setItem('loggedInUser', JSON.stringify(user)); await initializeUserSession(user); } else { hideLoadingOverlay(); alert('Usuário ou senha inválidos.'); } }
  async function initializeUserSession(user) {
@@ -1710,56 +1775,89 @@ async function fetchRequisicoesItens() {
     function renderConsultores(data = consultoresData) { 
         document.getElementById('rh-cards-container').innerHTML = data.map(c => createConsultorCard(c)).join(''); 
     }
-    function createConsultorCard(c) {
-        const fotoUrl = (c.Foto && c.Foto[0]?.signedPath) ? `${NocoDB_BaseURL}/${c.Foto[0].signedPath}` : `https://i.pravatar.cc/150?u=${c.Login || c.Nome}`;
-        const dataset = Object.keys(c).map(k => `data-${k.toLowerCase()}="${c[k] && typeof c[k] === 'object' ? JSON.stringify(c[k]) : (c[k] || '')}"`).join(' ');
-        const statusClass = c.Status === 'Ativo' ? 'bg-green-500' : 'bg-red-500';
-        return `<div class="rh-card relative bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 flex flex-col items-center text-center cursor-pointer hover:shadow-xl transition-shadow" ${dataset} data-nome="${c.Nome}" data-status="${c.Status || 'Ativo'}">
-                    <span class="absolute top-2 right-2 h-3 w-3 rounded-full ${statusClass}" title="Status: ${c.Status || 'Ativo'}"></span>
-                    <img src="${fotoUrl}" class="w-24 h-24 rounded-full object-cover mb-4">
-                    <h4 class="font-bold text-lg text-gray-800 dark:text-white">${c.Nome}</h4>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">${c.Email || ''}</p>
-                    <div class="flex space-x-4 mt-4">
-                        <a href="https://wa.me/${c.Telefone || ''}" target="_blank" class="text-green-500 hover:text-green-600"><i class="fab fa-whatsapp fa-2x"></i></a>
-                    </div>
-                </div>`;
+function createConsultorCard(c) {
+    const fotoUrl = (c.Foto && c.Foto[0]?.signedPath) ? `${NocoDB_BaseURL}/${c.Foto[0].signedPath}` : `https://i.pravatar.cc/150?u=${c.Login || c.Nome}`;
+    const dataset = Object.keys(c).map(k => `data-${k.toLowerCase()}="${c[k] && typeof c[k] === 'object' ? JSON.stringify(c[k]) : (c[k] || '')}"`).join(' ');
+    const statusClass = c.Status === 'Ativo' ? 'bg-green-500' : 'bg-red-500';
+
+    // --- INÍCIO DA ALTERAÇÃO ---
+
+    // 1. Ícones padrão (WhatsApp), visíveis para todos
+    let actionIconsHTML = `
+        <a href="https://wa.me/${c.Telefone || ''}" target="_blank" class="text-green-500 hover:text-green-600" title="WhatsApp">
+            <i class="fab fa-whatsapp fa-lg"></i>
+        </a>
+    `;
+
+    // 2. Ícones de Admin (Editar/Apagar), adicionados condicionalmente
+    if (loggedInUser && loggedInUser.Role === 'Admin') {
+        actionIconsHTML += `
+            <a href="#" class="consultor-edit-btn text-blue-500 hover:text-blue-700" title="Editar Consultor">
+                <i class="fas fa-edit fa-lg"></i>
+            </a>
+            <a href="#" class="consultor-delete-btn text-red-500 hover:text-red-700" title="Apagar Consultor">
+                <i class="fas fa-trash fa-lg"></i>
+            </a>
+        `;
     }
+    // --- FIM DA ALTERAÇÃO ---
+    
+    // O antigo div com o ícone do WhatsApp será substituído pelo novo.
+    return `<div class="rh-card relative bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 flex flex-col items-center text-center cursor-pointer hover:shadow-xl transition-shadow" ${dataset} data-nome="${c.Nome}" data-status="${c.Status || 'Ativo'}">
+                <span class="absolute top-2 right-2 h-3 w-3 rounded-full ${statusClass}" title="Status: ${c.Status || 'Ativo'}"></span>
+                <img src="${fotoUrl}" class="w-24 h-24 rounded-full object-cover mb-4">
+                <h4 class="font-bold text-lg text-gray-800 dark:text-white">${c.Nome}</h4>
+                <p class="text-sm text-gray-500 dark:text-gray-400">${c.Email || ''}</p>
+                <div class="flex space-x-4 mt-4">
+                    ${actionIconsHTML}
+                </div>
+            </div>`;
+}
     function renderClientes(data = clientesData) { document.getElementById('cliente-cards-container').innerHTML = data.map(c => createClienteCard(c)).join(''); }
-    function createClienteCard(c) { 
+function createClienteCard(c) { 
     const fotoUrl = (c.Foto && c.Foto[0]?.signedPath) ? `${NocoDB_BaseURL}/${c.Foto[0].signedPath}` : `https://picsum.photos/seed/${c.Nome.replace(/\s/g, '')}/100/100`; 
     const dataset = Object.keys(c).map(k => `data-${k.toLowerCase()}="${c[k] && typeof c[k] === 'object' ? JSON.stringify(c[k]) : (c[k] || '')}"`).join(' '); 
     const statusClass = c.Status === 'Ativo' ? 'bg-green-500' : 'bg-red-500';
 
     // --- INÍCIO DA ALTERAÇÃO ---
-    let actionButtonsHTML = '';
+
+    // 1. Ícones padrão, visíveis para todos
+    let actionIconsHTML = `
+        <a href="https://wa.me/${c.Telefone || ''}" target="_blank" class="text-green-500 hover:text-green-600" title="WhatsApp">
+            <i class="fab fa-whatsapp fa-lg"></i>
+        </a> 
+        <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.Endereco || '')}" target="_blank" class="text-blue-500 hover:text-blue-600" title="Ver no Mapa">
+            <i class="fas fa-map-marker-alt fa-lg"></i>
+        </a>
+        <a href="#" class="client-docs-btn text-gray-500 hover:text-gray-600" title="Ver Documentos" data-client-id="${c.Id}">
+            <i class="fas fa-folder-open fa-lg"></i>
+        </a>
+    `;
+
+    // 2. Ícones de Admin (Editar/Apagar), adicionados condicionalmente
     if (loggedInUser && loggedInUser.Role === 'Admin') {
-        actionButtonsHTML = `
-            <div class="card-actions absolute top-2 left-2 flex flex-col space-y-2">
-                <button class="client-edit-btn bg-blue-500 text-white w-8 h-8 rounded-full shadow hover:bg-blue-600 transition-colors" title="Editar Cliente">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="client-delete-btn bg-red-500 text-white w-8 h-8 rounded-full shadow hover:bg-red-600 transition-colors" title="Apagar Cliente">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
+        actionIconsHTML += `
+            <a href="#" class="client-edit-btn text-blue-500 hover:text-blue-700" title="Editar Cliente">
+                <i class="fas fa-edit fa-lg"></i>
+            </a>
+            <a href="#" class="client-delete-btn text-red-500 hover:text-red-700" title="Apagar Cliente">
+                <i class="fas fa-trash fa-lg"></i>
+            </a>
         `;
     }
     // --- FIM DA ALTERAÇÃO ---
 
-    // Adicionado ${actionButtonsHTML} no início do card
+    // O div 'card-actions' foi removido e a variável 'actionIconsHTML' é usada na parte inferior.
     return `<div class="cliente-card relative bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 flex flex-col items-center text-center cursor-pointer hover:shadow-xl transition-shadow" ${dataset} data-nome="${c.Nome}" data-status="${c.Status || 'Ativo'}"> 
-                ${actionButtonsHTML}
                 <span class="absolute top-2 right-2 h-3 w-3 rounded-full ${statusClass}" title="Status: ${c.Status || 'Ativo'}"></span>
                 <img src="${fotoUrl}" class="w-24 h-24 rounded-lg object-cover mb-4"> 
                 <h4 class="font-bold text-lg text-gray-800 dark:text-white">${c.Nome}</h4> 
                 <p class="text-sm text-gray-500 dark:text-gray-400">Responsável: ${c.Responsavel || ''}</p> 
                 <div class="flex space-x-4 mt-4"> 
-                    <a href="https://wa.me/${c.Telefone || ''}" target="_blank" class="text-green-500 hover:text-green-600"><i class="fab fa-whatsapp fa-2x"></i></a> 
-                    <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.Endereco || '')}" target="_blank" class="text-blue-500 hover:text-blue-600"><i class="fas fa-map-marker-alt fa-2x"></i></a> 
+                    ${actionIconsHTML}
                 </div> 
             </div>`; 
-}
-    
+}    
     function renderReceitas(data = receitasData) {
     const tbody = document.getElementById('receitas-table-body');
     const cardsContainer = document.getElementById('receitas-cards-container');
@@ -2087,6 +2185,7 @@ function renderAtivos(data = ativosData) {
                 if (fileData) body.Foto = [fileData];
                 break;
             }
+            
             case 'receita-form':
                 id = form.dataset.id;
                 endpoint = id ? `Receitas/${id}` : 'Receitas';
@@ -2204,10 +2303,10 @@ function renderAtivos(data = ativosData) {
                 }
                 // --- FIM DA ALTERAÇÃO ---
                 
-                const anexoInput = form.querySelector('#atestados-anexo');
-                if (anexoInput && anexoInput.files[0]) {
+                const atestadoAnexoInput = form.querySelector('#atestados-anexo');
+                if (atestadoAnexoInput && atestadoAnexoInput.files[0]) {
                     showLoadingOverlay('Enviando anexo...');
-                    const anexoData = await uploadFile('Atestados', 'Anexo', anexoInput.files[0]);
+                    const anexoData = await uploadFile('Atestados', 'Anexo', atestadoAnexoInput.files[0]);
                     if (anexoData) { body.Anexo = [anexoData]; } 
                     else { hideLoadingOverlay(); return; }
                 }
@@ -2253,6 +2352,68 @@ function renderAtivos(data = ativosData) {
                 
                 callback = async () => { await fetchAtivos(); applyAndRenderAtivos(); };
                 break;
+case 'doc-form':
+                // --- INÍCIO DA CORREÇÃO ---
+                // Atribuímos o valor à variável 'id' do escopo da função, em vez de criar uma nova 'docId'
+                id = form.querySelector('#doc-id').value; 
+                const clientIdForDoc = form.querySelector('#doc-cliente-id').value;
+                const docNomeInput = form.querySelector('#doc-nome');
+                const docDataInput = form.querySelector('#doc-data');  
+                const docAnexoInput = form.querySelector('#doc-anexo');  
+                
+                if (!docNomeInput.value.trim()) {
+                    alert('O campo "Nome do Documento" é obrigatório.');
+                    docNomeInput.focus();
+                    return;
+                }
+                
+                if (!docDataInput.value) {
+                    alert('O campo "Data do Documento" é obrigatório.');
+                    docDataInput.focus();
+                    return;
+                }
+
+                // A verificação do anexo só é obrigatória na criação (quando 'id' não existe)
+                if (!id && !docAnexoInput.files[0]) {
+                    alert('O campo "Anexar Arquivo" é obrigatório ao criar um novo documento.');
+                    docAnexoInput.focus();
+                    return;
+                }
+
+                // Usamos a variável 'id' que agora está corretamente definida
+                endpoint = id ? `Clientes_Docs/${id}` : 'Clientes_Docs';
+                
+                body = { 
+                    Documento: docNomeInput.value,
+                    Data: docDataInput.value 
+                };             
+                
+                if (id) { 
+                    body.Clientes_id = parseInt(clientIdForDoc);
+                } else { 
+                    body.Clientes = { "Id": parseInt(clientIdForDoc) };
+                }
+
+                if (docAnexoInput && docAnexoInput.files[0]) {
+                   if (docAnexoInput && docAnexoInput.files[0]) {
+                    showLoadingOverlay('Enviando anexo...');
+                    const anexoData = await uploadFile('Clientes_Docs', 'Anexo', docAnexoInput.files[0]);
+                    if (anexoData) { 
+                        body.Anexo = [anexoData]; 
+                    } else { 
+                        hideLoadingOverlay(); 
+                        return;
+                    }
+                } 
+                }
+
+                callback = async () => { 
+                    await fetchClienteDocs(); 
+                    openClienteDocsModal(clientIdForDoc); // Reabre e atualiza o modal principal
+                    hideModal(document.getElementById('doc-form-modal'));
+                };
+                // --- FIM DA CORREÇÃO ---
+                break;
             default: return;
         }
 
@@ -2292,6 +2453,17 @@ function renderAtivos(data = ativosData) {
             case 'visita': endpoint = `Visitas/${id}`; callback = async () => { await fetchVisitas(); applyFilters(); }; break;
             case 'consultor': endpoint = `Consultores/${id}`; callback = async () => { await fetchConsultores(); renderConsultores(); }; break;
             case 'cliente': endpoint = `Clientes/${id}`; callback = async () => { await fetchClientes(); renderClientes(); }; break;
+             case 'cliente_doc': 
+                endpoint = `Clientes_Docs/${id}`; 
+                callback = async () => { 
+                    await fetchClienteDocs(); 
+                    // Reabre o modal do cliente correto para atualizar a lista
+                    const deletedDoc = clienteDocsData.find(d => d.Id == id) || { Clientes_id: null };
+                    if (deletedDoc.Clientes_id) {
+                       openClienteDocsModal(deletedDoc.Clientes_id);
+                    }
+                }; 
+                break;
             case 'ferias': endpoint = `Ferias/${id}`; callback = async () => { await fetchFerias(); applyAndRenderFerias(); }; break;
             case 'atestado': endpoint = `Atestados/${id}`; callback = async () => { await fetchAtestados(); applyAndRenderAtestados(); }; break;
             case 'epi': endpoint = `Epis_Entregues/${id}`; callback = async () => { await fetchEpis(); applyAndRenderEpis(); }; break;
@@ -2421,21 +2593,94 @@ async function handleEditItemQuantity(itemJoinId, currentQty, itemName, requisic
     function populateConsultantSelects() { populateSelectWithOptions('.consultor-select', consultoresData, 'Id', 'Nome', false); }
     function populateClientSelects() { populateSelectWithOptions('.cliente-select', clientesData, 'Id', 'Nome', false); }
     
-    function handleGlobalClick(e) { 
-        const t = e.target; 
-        // Lógica para os novos botões de ação nos cards de cliente
+function handleGlobalClick(e) { 
+    const t = e.target; 
+ const consultorEditBtn = t.closest('.consultor-edit-btn');
+    if (consultorEditBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const card = consultorEditBtn.closest('.rh-card');
+        activeCard = card;
+        handleCardEdit(); // A função de edição já sabe lidar com cards de consultor
+        return;
+    }
+
+    const consultorDeleteBtn = t.closest('.consultor-delete-btn');
+    if (consultorDeleteBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const card = consultorDeleteBtn.closest('.rh-card');
+        activeDeleteItem = { id: card.dataset.id, type: 'consultor', element: card };
+        showModal(allElements.deleteConfirmModal);
+        return;
+    }
+    // --- INÍCIO DA CORREÇÃO ---
+    // Adiciona a lógica para os botões dentro dos modais de documento
+
+    // Botão para fechar o modal principal de documentos
+    if (t.closest('#close-cliente-docs-modal')) {
+        hideModal(document.getElementById('cliente-docs-modal'));
+        return;
+    }
+
+    // Botão "Adicionar Documento" que abre o segundo modal (formulário)
+    if (t.closest('#show-doc-form-btn')) {
+        const clientId = t.closest('#show-doc-form-btn').dataset.clientId;
+        openDocFormModal(clientId, null); // Abre o formulário em modo de criação
+        return;
+    }
+
+    // Botão para cancelar e fechar o modal de formulário
+    if (t.closest('#cancel-doc-form')) {
+        hideModal(document.getElementById('doc-form-modal'));
+        return;
+    }
+    
+    // Botão para editar um documento existente na lista
+    const docEditBtn = t.closest('.doc-edit-btn');
+    if (docEditBtn) {
+        const docId = docEditBtn.dataset.docId;
+        const doc = clienteDocsData.find(d => d.Id == docId);
+        if (doc) {
+            openDocFormModal(doc.Clientes_id, doc); // Abre o formulário em modo de edição
+        }
+        return;
+    }
+    
+    // Botão para apagar um documento da lista
+    const docDeleteBtn = t.closest('.doc-delete-btn');
+    if (docDeleteBtn) {
+        const docId = docDeleteBtn.dataset.docId;
+        const row = docDeleteBtn.closest('tr');
+        activeDeleteItem = { id: docId, type: 'cliente_doc', element: row };
+        showModal(allElements.deleteConfirmModal);
+        return;
+    }
+    // --- FIM DA CORREÇÃO ---
+
+
+    const docsBtn = t.closest('.client-docs-btn');
+    if (docsBtn) {
+        e.preventDefault(); 
+        e.stopPropagation();
+        openClienteDocsModal(docsBtn.dataset.clientId);
+        return;
+    }
+
     const editBtn = t.closest('.client-edit-btn');
     if (editBtn) {
-        e.stopPropagation(); // Impede que o clique no card abra o modal
+        e.preventDefault(); 
+        e.stopPropagation(); 
         const card = editBtn.closest('.cliente-card');
-        activeCard = card; // Define o card ativo
-        handleCardEdit();  // Chama a função de edição já existente
+        activeCard = card; 
+        handleCardEdit();
         return;
     }
 
     const deleteBtn = t.closest('.client-delete-btn');
     if (deleteBtn) {
-        e.stopPropagation(); // Impede que o clique no card abra o modal
+        e.preventDefault(); 
+        e.stopPropagation();
         const card = deleteBtn.closest('.cliente-card');
         activeDeleteItem = { id: card.dataset.id, type: 'cliente', element: card };
         showModal(allElements.deleteConfirmModal);
@@ -2600,7 +2845,7 @@ async function handleSaveRequisitionItems() {
         else if(btn.classList.contains('table-edit-btn'))handleTableEdit(btn); 
         else if(btn.classList.contains('table-delete-btn'))handleTableDelete(btn); 
         else if(btn.classList.contains('rh-tab-btn')||btn.classList.contains('requisicao-tab-btn')||btn.classList.contains('financeiro-tab-btn'))handleTabClick(btn);
-    }
+}
     
     function navigateTo(targetId, isInitial = false) { allElements.pages.forEach(page => page.classList.add('hidden')); const targetPage = document.getElementById(targetId); if (targetPage) { targetPage.classList.remove('hidden'); if (targetId === 'visitas' && calendar) setTimeout(() => calendar.render(), 1); if (targetId === 'dashboard') setTimeout(() => updateAllDashboards(), 1); } const navLink = document.querySelector(`.nav-link[data-target="${targetId}"]`); if (navLink) { document.querySelectorAll('.nav-link').forEach(l => { l.classList.remove('bg-brand-gold', 'text-white'); l.classList.add('text-gray-400', 'hover:bg-brand-gold', 'hover:text-white'); }); navLink.classList.add('bg-brand-gold', 'text-white'); navLink.classList.remove('text-gray-400'); if (document.getElementById('page-title')) document.getElementById('page-title').textContent = navLink.title; } }
     function handleNavClick(e) {
@@ -2839,7 +3084,7 @@ const openDetailsModal = (card) => {
     activeDeleteItem = { id: card.dataset.id, type: card.classList.contains('rh-card') ? 'consultor' : 'cliente', element: card };
 
     const actionsContainer = document.getElementById('details-modal-actions');
-    if (activeDeleteItem.type === 'cliente') {
+    if (activeDeleteItem.type === 'cliente'|| activeDeleteItem.type === 'consultor') {
         actionsContainer.style.display = 'none';
     } else {
         actionsContainer.style.display = 'flex';
@@ -3058,7 +3303,86 @@ if (typesWithoutActions.includes(type)) {
     document.getElementById('modal-content').innerHTML = contentHTML;
     showModal(allElements.detailsModal);
 }
+// --- NOVAS FUNÇÕES PARA GERENCIAR DOCUMENTOS ---
 
+function openClienteDocsModal(clientId) {
+    const cliente = clientesData.find(c => c.Id == clientId);
+    if (!cliente) return;
+
+    document.getElementById('cliente-docs-modal-title').textContent = `Documentos de: ${cliente.Nome}`;
+    
+    const tableBody = document.getElementById('cliente-docs-table-body');
+    const tableHead = document.querySelector('#cliente-docs-table-container thead tr');
+    
+    // ALTERAÇÃO: Adiciona a coluna "Data" ao cabeçalho, se ainda não existir
+    if (!tableHead.innerHTML.includes('Data')) {
+        tableHead.innerHTML = `
+            <th scope="col" class="px-6 py-3">Documento</th>
+            <th scope="col" class="px-6 py-3">Data</th>
+            <th scope="col" class="px-6 py-3">Anexo</th>
+            <th scope="col" class="px-6 py-3">Ações</th>
+        `;
+    }
+
+    tableBody.innerHTML = ''; // Limpa a tabela
+
+    const docsDoCliente = clienteDocsData.filter(d => d.Clientes_id == clientId);
+
+    if (docsDoCliente.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center">Nenhum documento anexado.</td></tr>';
+    } else {
+        docsDoCliente.forEach(doc => {
+            const anexoHTML = doc.Anexo && doc.Anexo[0]?.signedPath 
+                ? `<a href="${NocoDB_BaseURL}/${doc.Anexo[0].signedPath}" target="_blank" class="text-brand-gold hover:underline"><i class="fas fa-paperclip"></i> Ver Anexo</a>` 
+                : 'Nenhum';
+            
+            // Regras de permissão para os botões (mantidas)
+            const editBtnHTML = `<button class="doc-edit-btn text-blue-500 hover:text-blue-700" data-doc-id="${doc.Id}" title="Editar"><i class="fas fa-edit"></i></button>`;
+            const deleteBtnHTML = (loggedInUser && loggedInUser.Role === 'Admin') 
+                ? `<button class="doc-delete-btn text-red-500 hover:text-red-700" data-doc-id="${doc.Id}" title="Apagar"><i class="fas fa-trash"></i></button>`
+                : '';
+            const actionsHTML = `${editBtnHTML} ${deleteBtnHTML}`;
+
+            // ALTERAÇÃO: Formata a data e adiciona a nova célula <td>
+            const dataFormatada = doc.Data ? new Date(doc.Data + 'T00:00:00').toLocaleDateString('pt-BR') : 'N/A';
+
+            tableBody.innerHTML += `
+                <tr data-doc-id="${doc.Id}">
+                    <td class="px-6 py-4">${doc.Documento}</td>
+                    <td class="px-6 py-4">${dataFormatada}</td>
+                    <td class="px-6 py-4">${anexoHTML}</td>
+                    <td class="px-6 py-4 space-x-2">${actionsHTML}</td>
+                </tr>
+            `;
+        });
+    }
+    
+    document.getElementById('show-doc-form-btn').dataset.clientId = clientId;
+    showModal(document.getElementById('cliente-docs-modal'));
+}
+
+function openDocFormModal(clientId, doc = null) {
+    const form = document.getElementById('doc-form');
+    const title = document.getElementById('doc-form-modal-title');
+    form.reset();
+
+    document.getElementById('doc-cliente-id').value = clientId;
+
+    if (doc) { // Modo Edição
+        title.textContent = 'Editar Documento';
+        document.getElementById('doc-id').value = doc.Id;
+        document.getElementById('doc-nome').value = doc.Documento;
+        // ALTERAÇÃO: Preenche o campo de data
+        document.getElementById('doc-data').value = doc.Data; 
+    } else { // Modo Adicionar
+        title.textContent = 'Novo Documento';
+        document.getElementById('doc-id').value = '';
+        // ALTERAÇÃO: Define a data de hoje como padrão para novos documentos
+        document.getElementById('doc-data').value = new Date().toISOString().slice(0,10);
+    }
+
+    showModal(document.getElementById('doc-form-modal'));
+}
     function updateAllDashboards(){
         updateFinanceDashboard(); // Mantém a chamada para a aba "Balanço"
         updateReceitasDashboard(); // Adiciona a chamada para a nova aba "Receitas"
