@@ -946,78 +946,87 @@ body {
             <button id="show-validade-form" class="bg-brand-gold text-white px-4 py-2 rounded-lg shadow hover:bg-brand-gold-dark transition-colors">Nova Validade</button>
         </div>
 
-        <div id="validades-history-container">
-            <!-- Filtros -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4 p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
-            <div>
-                <label for="filter-validade-start-date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Validade De</label>
-                <input type="date" id="filter-validade-start-date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600">
-            </div>
-            <div>
-                <label for="filter-validade-end-date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Validade Até</label>
-                <input type="date" id="filter-validade-end-date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600">
-            </div>
-             <div id="filter-validade-consultor-wrapper"> 
-                <label for="filter-validade-consultor" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Consultor</label>
-                <select id="filter-validade-consultor" class="consultor-select bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600"></select>
-            </div>
-             <div> 
-                <label for="filter-validade-cliente" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cliente</label>
-                <select id="filter-validade-cliente" class="cliente-select bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600"></select>
-            </div>
-            <div>
-                    <label for="filter-validade-tipo" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipo</label>
-                    <select id="filter-validade-tipo" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600">
-                        <option value="">Todos</option>
-                        <option value="Certificados dos Bombeiros">Certificados dos Bombeiros</option>
-                        <option value="Alvará de Funcionamento">Alvará de Funcionamento</option>
-                        <option value="Manual de Boas Práticas e POP's">Manual de Boas Práticas e POP's</option>
-                        <option value="Certificado de Capacitação">Certificado de Capacitação</option>
-                        <option value="Licença Sanitária">Licença Sanitária</option>
-                        <option value="Licença Ambiental">Licença Ambiental</option>
-                        <option value="Licença de Publicidade">Licença de Publicidade</option>
-                        <option value="Licença Sonora">Licença Sonora</option>
-                        <option value="PGRS (Plano de Gerenciamento de Resíduos Sólidos)">PGRS</option>
-                        <option value="Análise de Água">Análise de Água</option>
-                        <option value="Controle de Pragas">Controle de Pragas</option>
-                        <option value="Cadastro Técnico">Cadastro Técnico</option>
-                        <option value="Certificado CRQ">Certificado CRQ</option>
-                        <option value="Comunicação o CRQ">Comunicação o CRQ</option>
-                        <option value="Inspeção Predial">Inspeção Predial</option>
-                    </select>
-                </div>
-            <div>
-                <label for="filter-validade-status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
-                <select id="filter-validade-status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600">
-                    <option value="">Todos</option>
-                    <option value="Vigente">Vigente</option>
-                    <option value="Vencido">Vencido</option>
-                    <option value="Pendente">Pendente</option>
-                    <option value="Em processo">Em processo</option>
-                    <option value="Isenção">Isenção</option>
-                    <option value="Não se aplica">Não se aplica</option>
-                </select>
-            </div>
+<div id="validades-history-container">
+    <!-- Filtros -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-4 p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+        
+        <div>
+            <label for="filter-validade-tipo" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipo</label>
+            <select id="filter-validade-tipo" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600">
+                <option value="">Todos</option>
+                <option value="Certificados dos Bombeiros">Certificados dos Bombeiros</option>
+                <option value="Alvará de Funcionamento">Alvará de Funcionamento</option>
+                <option value="Manual de Boas Práticas e POP's">Manual de Boas Práticas e POP's</option>
+                <option value="Certificado de Capacitação">Certificado de Capacitação</option>
+                <option value="Licença Sanitária">Licença Sanitária</option>
+                <option value="Licença Ambiental">Licença Ambiental</option>
+                <option value="Licença de Publicidade">Licença de Publicidade</option>
+                <option value="Licença Sonora">Licença Sonora</option>
+                <option value="PGRS (Plano de Gerenciamento de Resíduos Sólidos)">PGRS</option>
+                <option value="Análise de Água">Análise de Água</option>
+                <option value="Controle de Pragas">Controle de Pragas</option>
+                <option value="Cadastro Técnico">Cadastro Técnico</option>
+                <option value="Certificado CRQ">Certificado CRQ</option>
+                <option value="Comunicação o CRQ">Comunicação o CRQ</option>
+                <option value="Inspeção Predial">Inspeção Predial</option>
+            </select>
+        </div>
+        
+        <div>
+            <label for="filter-validade-status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+            <select id="filter-validade-status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600">
+                <option value="">Todos</option>
+                <option value="Vigente">Vigente</option>
+                <option value="Vencido">Vencido</option>
+                <option value="Pendente">Pendente</option>
+                <option value="Em processo">Em processo</option>
+                <option value="Isenção">Isenção</option>
+                <option value="Não se aplica">Não se aplica</option>
+            </select>
+        </div>
+        
+        <div id="filter-validade-consultor-wrapper"> 
+            <label for="filter-validade-consultor" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Consultor</label>
+            <select id="filter-validade-consultor" class="consultor-select bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600"></select>
         </div>
 
-        <!-- Tabela para Desktop -->
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg hidden md:block">
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-300">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                        <th scope="col" class="px-6 py-3">Cliente</th>
-                        <th scope="col" class="px-6 py-3">Tipo</th>
-                        <th scope="col" class="px-6 py-3">Validade</th>
-                        <th scope="col" class="px-6 py-3">Status</th>
-                        <th scope="col" class="px-6 py-3">Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="validades-table-body"></tbody>
-            </table>
+        <div> 
+            <label for="filter-validade-cliente" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cliente</label>
+            <select id="filter-validade-cliente" class="cliente-select bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600"></select>
         </div>
-        <!-- Cards para Mobile -->
-        <div id="validades-cards-container" class="grid grid-cols-1 gap-4 md:hidden"></div>
+
+        <div>
+            <label for="filter-validade-start-date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Validade De</label>
+            <input type="date" id="filter-validade-start-date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600">
+        </div>
+
+        <div>
+            <label for="filter-validade-end-date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Validade Até</label>
+            <input type="date" id="filter-validade-end-date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600">
+        </div>
+
     </div>
+
+    <!-- Tabela para Desktop -->
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg hidden md:block">
+        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-300">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3">Cliente</th>
+                    <th scope="col" class="px-6 py-3">Tipo</th>
+                    <th scope="col" class="px-6 py-3">Validade</th>
+                    <th scope="col" class="px-6 py-3">Status</th>
+                    <th scope="col" class="px-6 py-3">Ações</th>
+                </tr>
+            </thead>
+            <tbody id="validades-table-body"></tbody>
+        </table>
+    </div>
+    
+    <!-- Cards para Mobile -->
+    <div id="validades-cards-container" class="grid grid-cols-1 gap-4 md:hidden"></div>
+</div>
+   
 
     <!-- Formulário de Nova/Edição Validade -->
     <div id="validade-form-container" class="hidden mt-6 p-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
@@ -1080,11 +1089,151 @@ body {
         </form>
     </div>
 </div>
- <div id="dados-content" class="validades-tab-content hidden">
-        <h3 class="text-xl font-bold text-gray-800 dark:text-white">Dados e Estatísticas</h3>
-        <p class="text-gray-600 dark:text-gray-300 mt-2">Esta área será implementada em breve.</p>
+
+ <div id="dados-content" class="validades-tab-content hidden space-y-6">
+    <!-- Cards de KPIs -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow flex flex-col items-center text-center md:flex-row md:text-left md:p-6">
+        <div class="p-3 rounded-full bg-red-100 dark:bg-red-900 mb-2 md:mb-0 md:mr-4">
+            <i class="fas fa-times-circle fa-2x text-red-500"></i>
+        </div>
+        <div>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-300">Total Vencidos</p>
+            <p id="dados-kpi-vencidos" class="text-3xl font-bold text-gray-900 dark:text-white">0</p>
+        </div>
+    </div>
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow flex flex-col items-center text-center md:flex-row md:text-left md:p-6">
+        <div class="p-3 rounded-full bg-yellow-100 dark:bg-yellow-900 mb-2 md:mb-0 md:mr-4">
+            <i class="fas fa-exclamation-triangle fa-2x text-yellow-500"></i>
+        </div>
+        <div>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-300">Vencendo em 30 dias</p>
+            <p id="dados-kpi-vencendo" class="text-3xl font-bold text-gray-900 dark:text-white">0</p>
+        </div>
+    </div>
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow flex flex-col items-center text-center md:flex-row md:text-left md:p-6">
+        <div class="p-3 rounded-full bg-orange-100 dark:bg-orange-900 mb-2 md:mb-0 md:mr-4">
+            <i class="fas fa-pause-circle fa-2x text-orange-500"></i>
+        </div>
+        <div>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-300">Pendentes</p>
+            <p id="dados-kpi-pendentes" class="text-3xl font-bold text-gray-900 dark:text-white">0</p>
+        </div>
+    </div>
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow flex flex-col items-center text-center md:flex-row md:text-left md:p-6">
+        <div class="p-3 rounded-full bg-blue-100 dark:bg-blue-900 mb-2 md:mb-0 md:mr-4">
+            <i class="fas fa-cogs fa-2x text-blue-500"></i>
+        </div>
+        <div>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-300">Em Processo</p>
+            <p id="dados-kpi-em-processo" class="text-3xl font-bold text-gray-900 dark:text-white">0</p>
+        </div>
     </div>
 </div>
+    </div>
+
+    <!-- Gráfico de Status Geral -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <h4 class="font-bold text-lg text-gray-800 dark:text-white mb-4">Status Geral dos Documentos</h4>
+        <canvas id="validades-status-geral-chart"></canvas>
+    </div>
+
+    <!-- Tabela de Ações Críticas -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <h4 class="font-bold text-lg text-gray-800 dark:text-white mb-4">Ações Críticas (Vencidos e Próximos do Vencimento)</h4>
+        
+        <!-- Tabela para Desktop (escondida em mobile) -->
+        <div class="relative overflow-x-auto hidden md:block">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Cliente</th>
+                        <th scope="col" class="px-6 py-3">Tipo de Documento</th>
+                        <th scope="col" class="px-6 py-3">Data de Validade</th>
+                        <th scope="col" class="px-6 py-3">Dias para Vencer</th>
+                        <th scope="col" class="px-6 py-3">Consultor</th>
+                    </tr>
+                </thead>
+                <tbody id="validades-acoes-criticas-body">
+                    <!-- Conteúdo gerado via JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Cards para Mobile (visível apenas em mobile) -->
+        <div id="validades-acoes-criticas-cards" class="grid grid-cols-1 gap-4 md:hidden">
+            <!-- Conteúdo gerado via JS -->
+        </div>
+    </div>
+
+    <!-- Seção 2: Análise de Desempenho dos Consultores -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <h4 class="font-bold text-lg text-gray-800 dark:text-white mb-4">Carga de Trabalho por Consultor</h4>
+            <canvas id="validades-consultor-carga-chart"></canvas>
+        </div>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <h4 class="font-bold text-lg text-gray-800 dark:text-white mb-4">Ranking de Performance dos Consultores</h4>
+            
+            <!-- Tabela Desktop -->
+            <div class="relative overflow-x-auto hidden md:block">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-4 py-3">Consultor</th>
+                            <th scope="col" class="px-4 py-3 text-center">% Em Conformidade</th>
+                            <th scope="col" class="px-4 py-3 text-center">Pendências</th>
+                            <th scope="col" class="px-4 py-3 text-center">Vencidos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="validades-consultor-ranking-body">
+                        <!-- Conteúdo gerado via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Cards Mobile -->
+             <div id="validades-consultor-ranking-cards" class="grid grid-cols-1 gap-4 md:hidden">
+                <!-- Conteúdo gerado via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Seção 3 e 4: Risco por Cliente e Visão Estratégica -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <h4 class="font-bold text-lg text-gray-800 dark:text-white mb-4">Top 5 Clientes Mais Críticos</h4>
+             
+             <!-- Tabela Desktop -->
+             <div class="relative overflow-x-auto hidden md:block">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-4 py-3">Cliente</th>
+                            <th scope="col" class="px-4 py-3 text-center">Pendentes</th>
+                            <th scope="col" class="px-4 py-3 text-center">Vencidos</th>
+                            <th scope="col" class="px-4 py-3 text-center">Total Crítico</th>
+                        </tr>
+                    </thead>
+                    <tbody id="validades-clientes-criticos-body">
+                        <!-- Conteúdo gerado via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Cards Mobile -->
+             <div id="validades-clientes-criticos-cards" class="grid grid-cols-1 gap-4 md:hidden">
+                <!-- Conteúdo gerado via JS -->
+            </div>
+        </div>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <h4 class="font-bold text-lg text-gray-800 dark:text-white mb-4">Principais Documentos com Pendências/Vencidos</h4>
+            <canvas id="validades-pareto-chart"></canvas>
+        </div>
+    </div>
+</div>
+</div>
+
                 </main>
             </div>
         </div>
@@ -1431,9 +1580,9 @@ document.addEventListener('DOMContentLoaded', function() {
         senhaportal: 'Senha do Portal',
         visitasdocliente: 'Visitas do Cliente',
         receitasdocliente: 'Receitas do Cliente',
-        valor: 'Valor do Contrato',
+        valor: 'Valor',
 
-        // Campos de Férias, Atestados, EPIs, Ativos
+        // Campos de Férias, Atestados, EPIs, Ativos,Validades,Reembolsos
         consultores: 'Consultor',
         datainicio: 'Data de Início',
         dataretorno: 'Data de Retorno',
@@ -1452,6 +1601,8 @@ document.addEventListener('DOMContentLoaded', function() {
         clientes_docs: 'Total de Documentos',
         validade: 'Data de Validade', 
         tipo: 'Tipo de Documento',
+        createdat: 'Criado em',
+        updatedat: 'Alterado em',
     };
 
     // --- Variáveis de Estado da UI ---
@@ -1460,6 +1611,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let calendar;
     let financeChart, visitsStatusChart, clientsVisitsChart, clientsHoursChart, receitasByClienteChart, custosByCredorChart;
     let activeDeleteItem = { id: null, type: null, element: null };
+    let validadesStatusGeralChart; 
+    let validadesConsultorCargaChart, validadesParetoChart;
 
     // --- Seletores Globais ---
     const allElements = {
@@ -1595,7 +1748,218 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    // Função principal para atualizar a aba de Receitas
+ function updateConsultorCargaChart(data) {
+    const ctx = document.getElementById('validades-consultor-carga-chart').getContext('2d');
+    const isDark = document.documentElement.classList.contains('dark');
+    const labelColor = isDark ? '#e5e7eb' : '#373737';
+
+    // --- INÍCIO DA CORREÇÃO ---
+    // 1. Detecta se a tela é mobile
+    const isMobile = window.innerWidth < 768; // O breakpoint 'md' do Tailwind
+    // --- FIM DA CORREÇÃO ---
+
+    const statusColors = {
+        'Vigente': '#10B981', 'Vencido': '#EF4444', 'Pendente': '#F59E0B', 
+        'Em processo': '#3B82F6', 'Isenção': '#6B7280', 'Não se aplica': '#9CA3AF'
+    };
+
+    const dataByConsultor = data.reduce((acc, item) => {
+        const consultorName = item.Consultores?.Nome || 'N/A';
+        if (!acc[consultorName]) acc[consultorName] = {};
+        acc[consultorName][item.Status] = (acc[consultorName][item.Status] || 0) + 1;
+        return acc;
+    }, {});
+
+    const labels = Object.keys(dataByConsultor);
+    const allStatuses = Object.keys(statusColors);
+
+    const datasets = allStatuses.map(status => ({
+        label: status,
+        data: labels.map(consultor => dataByConsultor[consultor][status] || 0),
+        backgroundColor: statusColors[status],
+    }));
+
+    const options = {
+        responsive: true,
+        // --- INÍCIO DA CORREÇÃO ---
+        // 2. Define o eixo do gráfico (orientação) com base no tamanho da tela
+        indexAxis: isMobile ? 'y' : 'x', 
+        // --- FIM DA CORREÇÃO ---
+        plugins: { legend: { position: 'top', labels: { color: labelColor } } },
+        scales: {
+            // A configuração de 'stacked' agora é aplicada a ambos os eixos
+            // O Chart.js vai usar a que for relevante com base no indexAxis
+            x: { stacked: true, ticks: { color: labelColor } },
+            y: { stacked: true, ticks: { color: labelColor, beginAtZero: true } }
+        }
+    };
+
+    if (validadesConsultorCargaChart) {
+        validadesConsultorCargaChart.data.labels = labels;
+        validadesConsultorCargaChart.data.datasets = datasets;
+        validadesConsultorCargaChart.options.indexAxis = isMobile ? 'y' : 'x'; // Atualiza o eixo
+        validadesConsultorCargaChart.update();
+    } else {
+        validadesConsultorCargaChart = new Chart(ctx, {
+            type: 'bar',
+            data: { labels, datasets },
+            options: options
+        });
+    }
+}   
+
+// Renderiza a tabela de ranking de performance dos consultores
+function renderConsultorRankingTable(data) {
+    const tbody = document.getElementById('validades-consultor-ranking-body');
+    const cardsContainer = document.getElementById('validades-consultor-ranking-cards');
+    if (!tbody || !cardsContainer) return;
+
+    const stats = data.reduce((acc, item) => {
+        const consultorName = item.Consultores?.Nome || 'N/A';
+        if (!acc[consultorName]) {
+            acc[consultorName] = { total: 0, vigente: 0, pendente: 0, vencido: 0 };
+        }
+        acc[consultorName].total++;
+        if (item.Status === 'Vigente' || item.Status === 'Isenção' || item.Status === 'Não se aplica') acc[consultorName].vigente++;
+        if (item.Status === 'Pendente') acc[consultorName].pendente++;
+        if (item.Status === 'Vencido') acc[consultorName].vencido++;
+        return acc;
+    }, {});
+
+    const ranked = Object.entries(stats).map(([name, metrics]) => ({
+        name,
+        conformidade: (metrics.total > 0 ? (metrics.vigente / metrics.total) * 100 : 0),
+        pendente: metrics.pendente,
+        vencido: metrics.vencido,
+    })).sort((a, b) => b.conformidade - a.conformidade);
+
+    let tableHTML = '';
+    let cardsHTML = '';
+
+    ranked.forEach(consultor => {
+        tableHTML += `
+            <tr class="border-b dark:border-gray-700">
+                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">${consultor.name}</td>
+                <td class="px-4 py-3 text-center">${consultor.conformidade.toFixed(1)}%</td>
+                <td class="px-4 py-3 text-center">${consultor.pendente}</td>
+                <td class="px-4 py-3 text-center font-bold text-red-500">${consultor.vencido}</td>
+            </tr>`;
+        
+        cardsHTML += `
+            <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+                <p class="font-bold text-lg text-gray-900 dark:text-white">${consultor.name}</p>
+                <p class="text-sm font-semibold text-green-500">Conformidade: ${consultor.conformidade.toFixed(1)}%</p>
+                <div class="mt-2 pt-2 border-t dark:border-gray-600 text-sm space-y-1">
+                    <p><strong>Pendências:</strong> ${consultor.pendente}</p>
+                    <p><strong>Vencidos:</strong> <span class="font-bold text-red-500">${consultor.vencido}</span></p>
+                </div>
+            </div>`;
+    });
+
+    tbody.innerHTML = tableHTML;
+    cardsContainer.innerHTML = cardsHTML;
+}
+
+// Renderiza a tabela de Top 5 clientes críticos
+function renderClientesCriticosTable(data) {
+    const tbody = document.getElementById('validades-clientes-criticos-body');
+    const cardsContainer = document.getElementById('validades-clientes-criticos-cards');
+    if (!tbody || !cardsContainer) return;
+    
+    const criticalStatus = ['Vencido', 'Pendente'];
+    const stats = data.filter(item => criticalStatus.includes(item.Status))
+        .reduce((acc, item) => {
+            const clienteName = item.Clientes?.Nome || 'N/A';
+            if (!acc[clienteName]) {
+                acc[clienteName] = { Pendente: 0, Vencido: 0, total: 0 };
+            }
+            acc[clienteName][item.Status]++;
+            acc[clienteName].total++;
+            return acc;
+        }, {});
+
+    const ranked = Object.entries(stats).map(([name, metrics]) => ({ name, ...metrics }))
+        .sort((a, b) => b.total - a.total)
+        .slice(0, 5);
+
+    if (ranked.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">Nenhum cliente em estado crítico.</td></tr>';
+        cardsContainer.innerHTML = '<p class="text-center text-gray-500">Nenhum cliente em estado crítico.</p>';
+        return;
+    }
+
+    let tableHTML = '';
+    let cardsHTML = '';
+
+    ranked.forEach(cliente => {
+        tableHTML += `
+            <tr class="border-b dark:border-gray-700">
+                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">${cliente.name}</td>
+                <td class="px-4 py-3 text-center">${cliente.Pendente}</td>
+                <td class="px-4 py-3 text-center text-red-500">${cliente.Vencido}</td>
+                <td class="px-4 py-3 text-center font-bold">${cliente.total}</td>
+            </tr>`;
+
+        cardsHTML += `
+            <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+                <p class="font-bold text-lg text-gray-900 dark:text-white">${cliente.name}</p>
+                <p class="text-sm font-semibold text-gray-600 dark:text-gray-300">Total Crítico: <span class="text-xl">${cliente.total}</span></p>
+                <div class="mt-2 pt-2 border-t dark:border-gray-600 text-sm space-y-1">
+                    <p><strong>Pendências:</strong> ${cliente.Pendente}</p>
+                    <p><strong>Vencidos:</strong> <span class="font-bold text-red-500">${cliente.Vencido}</span></p>
+                </div>
+            </div>`;
+    });
+    
+    tbody.innerHTML = tableHTML;
+    cardsContainer.innerHTML = cardsHTML;
+}
+
+// Renderiza o gráfico de Pareto para os tipos de documentos
+function updateParetoChart(data) {
+    const ctx = document.getElementById('validades-pareto-chart').getContext('2d');
+    const isDark = document.documentElement.classList.contains('dark');
+    const labelColor = isDark ? '#e5e7eb' : '#373737';
+    
+    const criticalStatus = ['Vencido', 'Pendente'];
+    const stats = data.filter(item => criticalStatus.includes(item.Status))
+        .reduce((acc, item) => {
+            acc[item.Tipo] = (acc[item.Tipo] || 0) + 1;
+            return acc;
+        }, {});
+
+    const sorted = Object.entries(stats).sort((a, b) => b[1] - a[1]).slice(0, 7); // Pega os 7 principais
+
+    const labels = sorted.map(item => item[0]);
+    const chartData = sorted.map(item => item[1]);
+
+    if (validadesParetoChart) {
+        validadesParetoChart.data.labels = labels;
+        validadesParetoChart.data.datasets[0].data = chartData;
+        validadesParetoChart.update();
+    } else {
+        validadesParetoChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Contagem de Itens Críticos',
+                    data: chartData,
+                    backgroundColor: '#BFA16A',
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: labelColor, beginAtZero: true, stepSize: 1 } },
+                    y: { ticks: { color: labelColor } }
+                }
+            }
+        });
+    }
+}
     function updateReceitasDashboard() {
         const status = document.getElementById('dash-rec-status').value;
         const clienteId = document.getElementById('dash-rec-cliente').value;
@@ -1973,9 +2337,9 @@ async function fetchReembolsos() {
         });
     } else {
         if (loggedInUser.Role === 'Gestor') {
-            allowedPages = ['visitas', 'requisicao','clientes','reembolsos'];
+            allowedPages = ['visitas', 'requisicao','clientes','reembolsos','validades'];
         } else if (loggedInUser.Role === 'Consultor') {
-            allowedPages = ['visitas', 'requisicao','clientes','reembolsos'];
+            allowedPages = ['visitas', 'requisicao','clientes','reembolsos','validades'];
         }
 
         // Aplica o filtro de páginas para Gestor e Consultor
@@ -2039,6 +2403,51 @@ async function fetchReembolsos() {
         }
     }
     // --- Funções de Renderização ---
+    function handleTabClick(btn) {
+    const tabContainer = btn.closest('ul');
+    if (!tabContainer) return;
+
+    const baseClass = tabContainer.id.replace('-tabs', ''); // ex: 'validades', 'rh'
+    const tabButtonsSelector = `.${baseClass}-tab-btn`;
+    const tabContentSelector = `.${baseClass}-tab-content`;
+
+    tabContainer.querySelectorAll(tabButtonsSelector).forEach(b => {
+        b.classList.remove('border-brand-gold', 'text-brand-gold');
+        b.classList.add('border-transparent');
+    });
+    btn.classList.add('border-brand-gold', 'text-brand-gold');
+
+    const pageContainer = btn.closest('.page');
+    if (pageContainer) {
+        pageContainer.querySelectorAll(tabContentSelector).forEach(c => c.classList.add('hidden'));
+        const targetContent = document.getElementById(btn.dataset.target);
+        if (targetContent) {
+            targetContent.classList.remove('hidden');
+        }
+        
+        // Se a aba clicada for a de "Dados" da tela de Validades, renderiza o dashboard
+        if (btn.dataset.target === 'dados-content' && pageContainer.id === 'validades') {
+            renderValidadesDadosDashboard();
+        }
+    }
+
+    // Salva a sub-aba ativa para a página atual
+    if (pageContainer) {
+        sessionStorage.setItem(`activeSubTab_${pageContainer.id}`, btn.dataset.target);
+    }
+
+    // Lógica específica para o botão "Novo Item" na tela de Requisições
+    const newItemButton = document.getElementById('show-new-item-btn');
+    if (newItemButton) {
+        const shouldShow = (
+            btn.dataset.target === 'itens-requisicao-content' &&
+            pageContainer.id === 'requisicao' &&
+            loggedInUser && 
+            loggedInUser.Role === 'Admin'
+        );
+        newItemButton.style.display = shouldShow ? 'block' : 'none';
+    }
+}
     function renderValidades(data = validadesData) {
     const tbody = document.getElementById('validades-table-body');
     const cardsContainer = document.getElementById('validades-cards-container');
@@ -2059,14 +2468,13 @@ async function fetchReembolsos() {
 
     data.forEach(v => {
         const statusClass = getStatusClass(v.Status);
-        // Somente Admin pode editar/apagar
-        const canModify = loggedInUser.Role === 'Admin';
         
-        let actionsHTML = `<button class="table-details-btn text-gray-500" data-type="validade" title="Ver Detalhes"><i class="fas fa-eye"></i></button>`;
-        if (canModify) {
-            actionsHTML += `<button class="table-edit-btn text-blue-500" data-type="validade" title="Editar"><i class="fas fa-edit"></i></button>
-                            <button class="table-delete-btn text-red-500" data-type="validade" title="Apagar"><i class="fas fa-trash"></i></button>`;
-        }
+        
+        let actionsHTML = `
+            <button class="table-details-btn text-gray-500" data-type="validade" title="Ver Detalhes"><i class="fas fa-eye"></i></button>
+            <button class="table-edit-btn text-blue-500" data-type="validade" title="Editar"><i class="fas fa-edit"></i></button>
+            <button class="table-delete-btn text-red-500" data-type="validade" title="Apagar"><i class="fas fa-trash"></i></button>
+        `;
 
         // Tabela Desktop
         tbody.innerHTML += `
@@ -2473,13 +2881,35 @@ function applyAndRenderValidades() {
     const tipo = document.getElementById('filter-validade-tipo').value;
     
     let filtered = validadesData.filter(v =>
-        (!startDate || v.Validade >= startDate) &&
-        (!endDate || v.Validade <= endDate) &&
+        (!startDate || (v.Validade && v.Validade >= startDate)) &&
+        (!endDate || (v.Validade && v.Validade <= endDate)) &&
         (!consultorId || v.Consultores?.Id == consultorId) &&
         (!clienteId || v.Clientes?.Id == clienteId) &&
-        (!status || v.Status === status) && // <-- INÍCIO DA CORREÇÃO: O '&&' foi adicionado aqui
+        (!status || v.Status === status) &&
         (!tipo || v.Tipo === tipo)
     );
+
+    // --- INÍCIO DA ALTERAÇÃO: Lógica de Ordenação ---
+    const statusOrder = { 'Vencido': 1, 'Pendente': 2, 'Em processo': 3, 'Vigente': 4, 'Isenção': 5, 'Não se aplica': 6 };
+    
+    filtered.sort((a, b) => {
+        const priorityA = statusOrder[a.Status] || 99;
+        const priorityB = statusOrder[b.Status] || 99;
+
+        // 1. Ordena por prioridade de Status primeiro
+        if (priorityA !== priorityB) {
+            return priorityA - priorityB;
+        }
+
+        // 2. Se o status for o mesmo, ordena por data (mais antiga primeiro)
+        // Registros sem data de validade vão para o final do seu grupo de status
+        if (!a.Validade) return 1;
+        if (!b.Validade) return -1;
+        
+        return new Date(a.Validade) - new Date(b.Validade);
+    });
+    // --- FIM DA ALTERAÇÃO ---
+
     renderValidades(filtered);
 }
         function applyConsultorFilters() {
@@ -2504,17 +2934,33 @@ function applyAndRenderValidades() {
         const rhSubFormIds = ['ferias-form', 'atestados-form', 'epis-form', 'ativos-form'];
         
         switch (form.id) {
-            case 'validade-form':
+          case 'validade-form':
     id = form.dataset.id;
+    const clienteIdValidade = parseInt(form.querySelector('#validade-cliente').value);
+    const tipoValidade = form.querySelector('#validade-tipo-form').value;
+
+    // --- INÍCIO DA ALTERAÇÃO: Validação de duplicatas ---
+    const isDuplicate = validadesData.some(
+        v => v.Clientes?.Id == clienteIdValidade &&
+             v.Tipo === tipoValidade &&
+             v.Id != id // Ignora o próprio registro durante a edição
+    );
+
+    if (isDuplicate) {
+        alert(`Erro: O cliente selecionado já possui um registro para o tipo de documento "${tipoValidade}".`);
+        return; // Interrompe o salvamento
+    }
+    // --- FIM DA ALTERAÇÃO ---
+
     endpoint = id ? `Validades/${id}` : 'Validades';
     body = {
-        Validade: form.querySelector('#validade-data').value,
-        Tipo: form.querySelector('#validade-tipo-form').value,
+        Validade: form.querySelector('#validade-data').value || null, // Garante que valor vazio seja enviado como nulo
+        Tipo: tipoValidade,
         Status: form.querySelector('#validade-status-form').value,
         Observacao: form.querySelector('#validade-observacao').value
     };
+    
     const consultorIdValidade = parseInt(form.querySelector('#validade-consultor').value);
-    const clienteIdValidade = parseInt(form.querySelector('#validade-cliente').value);
     if (id) {
         body.Consultores_id = consultorIdValidade;
         body.Clientes_id = clienteIdValidade;
@@ -3293,7 +3739,7 @@ async function handleSaveRequisitionItems() {
         if (btn.classList.contains('table-details-btn')) openDetailsModalForRow(btn);
         else if(btn.classList.contains('table-edit-btn'))handleTableEdit(btn); 
         else if(btn.classList.contains('table-delete-btn'))handleTableDelete(btn); 
-        else if(btn.classList.contains('rh-tab-btn')||btn.classList.contains('requisicao-tab-btn')||btn.classList.contains('financeiro-tab-btn'))handleTabClick(btn);
+        else if(btn.classList.contains('rh-tab-btn')||btn.classList.contains('requisicao-tab-btn')||btn.classList.contains('financeiro-tab-btn')||btn.classList.contains('validades-tab-btn'))handleTabClick(btn);
 }
     
     function navigateTo(targetId, isInitial = false) { allElements.pages.forEach(page => page.classList.add('hidden')); const targetPage = document.getElementById(targetId); if (targetPage) { targetPage.classList.remove('hidden'); if (targetId === 'visitas' && calendar) setTimeout(() => calendar.render(), 1); if (targetId === 'dashboard') setTimeout(() => updateAllDashboards(), 1); } const navLink = document.querySelector(`.nav-link[data-target="${targetId}"]`); if (navLink) { document.querySelectorAll('.nav-link').forEach(l => { l.classList.remove('bg-brand-gold', 'text-white'); l.classList.add('text-gray-400', 'hover:bg-brand-gold', 'hover:text-white'); }); navLink.classList.add('bg-brand-gold', 'text-white'); navLink.classList.remove('text-gray-400'); if (document.getElementById('page-title')) document.getElementById('page-title').textContent = navLink.title; } }
@@ -3337,38 +3783,7 @@ function handleViewToggle(e) {
             }
         }
     }
-function handleTabClick(btn) {
-        const tC = btn.closest('ul');
-        tC.querySelectorAll('button').forEach(b => {
-            b.classList.remove('border-brand-gold', 'text-brand-gold');
-            b.classList.add('border-transparent');
-        });
-        btn.classList.add('border-brand-gold', 'text-brand-gold');
-        const cC = btn.classList.contains('rh-tab-btn') ? '.rh-tab-content' : btn.classList.contains('requisicao-tab-btn') ? '.requisicao-tab-content' : '.financeiro-tab-content';
-        const pC = btn.closest('.page');
-        if (pC && cC) {
-            pC.querySelectorAll(cC).forEach(c => c.classList.add('hidden'));
-            document.getElementById(btn.dataset.target)?.classList.remove('hidden');
-        }
 
-        // --- INÍCIO DA ALTERAÇÃO 1: Salvar a sub-aba ativa ---
-        if (pC) {
-            const pageId = pC.id;
-            const targetId = btn.dataset.target;
-            // Salva a sub-aba ativa usando uma chave única para a página atual (ex: 'activeSubTab_rh')
-            sessionStorage.setItem(`activeSubTab_${pageId}`, targetId);
-        }
-        // --- FIM DA ALTERAÇÃO 1 ---
-
-        const newItemButton = document.getElementById('show-new-item-btn');
-        if (newItemButton) {
-            if (btn.dataset.target === 'itens-requisicao-content' && loggedInUser && loggedInUser.Role === 'Admin') {
-                newItemButton.style.display = 'block';
-            } else {
-                newItemButton.style.display = 'none';
-            }
-        }
-    }
     
   function generateAgendaPdf() {
         const startDate = document.getElementById('filter-start-date').value;
@@ -3617,8 +4032,6 @@ const openDetailsModal = (card) => {
         renderClientes(filteredData);
     }
 function openDetailsModalForRow(btn) {
-    // CORREÇÃO: Altera de .closest('tr') para .closest('[data-id]')
-    // para funcionar tanto na tabela (tr) quanto nos cards (div).
     const dataContainer = btn.closest('[data-id]');
     if (!dataContainer) return;
 
@@ -3627,18 +4040,13 @@ function openDetailsModalForRow(btn) {
     let dataArray, title;
 
     const actionsContainer = document.getElementById('details-modal-actions');
+    const typesWithoutActions = ['visita', 'ferias', 'atestado', 'epi', 'ativo', 'receita', 'custo', 'reembolso', 'validade'];
 
-    // --- INÍCIO DA ALTERAÇÃO ---
-    // Verifica o tipo de modal. Se for 'visita', esconde os botões de ação.
-    // Para todos os outros tipos, garante que os botões estejam visíveis.
-    const typesWithoutActions = ['visita', 'ferias', 'atestado', 'epi', 'ativo', 'receita', 'custo'];
-
-if (typesWithoutActions.includes(type)) {
-    actionsContainer.style.display = 'none'; // Esconde os botões se o tipo estiver na lista
-} else {
-    actionsContainer.style.display = 'flex'; // Mostra os botões para todos os outros tipos
-}
-    // --- FIM DA ALTERAÇÃO ---
+    if (typesWithoutActions.includes(type)) {
+        actionsContainer.style.display = 'none';
+    } else {
+        actionsContainer.style.display = 'flex';
+    }
 
     switch (type) {
         case 'visita': dataArray = visitsData; title = 'Detalhes da Visita'; break;
@@ -3663,7 +4071,7 @@ if (typesWithoutActions.includes(type)) {
 
     let contentHTML = '';
     if (type === 'requisicao') {
-        actionsContainer.style.display = 'none'; // Lógica específica para requisição (mantida)
+        actionsContainer.style.display = 'none'; 
 
         const itensFiltrados = requisicoesItensData.filter(item => item.Requisicoes_id === id);
         const showActions = loggedInUser.IsAdmin || data.Status === 'Pendente';
@@ -3750,34 +4158,51 @@ if (typesWithoutActions.includes(type)) {
                        ${mobileCardsContainerHTML}`;
     } 
     else {
-        // --- INÍCIO DA ALTERAÇÃO ---
-        let ignoredKeys = ['Id', 'id', 'startTime', 'endTime', 'nc_created_by', 'nc_updated_by', 'nc_order'];
+        const fm = {
+            formatter: (key, value) => {
+                const keyLower = key.toLowerCase();
+                if (keyLower.includes('data') || keyLower === 'validade') {
+                    if (value && value.includes('T')) return new Date(value).toLocaleString('pt-BR');
+                    if (value) return new Date(value + 'T00:00:00').toLocaleDateString('pt-BR');
+                    return 'N/A';
+                }
+                if (keyLower === 'valor' || keyLower === 'valorhora') {
+                    const numValue = parseFloat(value);
+                    if (!isNaN(numValue)) {
+                        return numValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                    }
+                }
+                return null;
+            }
+        };
+        
+        const ignoredKeys = [
+            'id', 'starttime', 'endtime', 'createdat', 'updatedat', 
+            'nc_created_by', 'nc_updated_by', 'nc_order',
+            'clientes_id', 'consultores_id'
+        ];
         
         contentHTML = Object.entries(data).map(([key, value]) => {
             const keyLower = key.toLowerCase();
             
-            // Ignora chaves específicas
-            if (ignoredKeys.includes(key)) return '';
+            if (ignoredKeys.includes(keyLower)) return '';
 
-            // Usa o mapa global para obter o rótulo
             const label = GLOBAL_LABEL_MAP[keyLower] || key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+            
+            let displayValue = fm.formatter(key, value);
 
-            let displayValue = value;
-
-            // Formata valores especiais
-            if (key.toLowerCase().includes('data')) {
-                displayValue = value ? new Date(value + 'T00:00:00').toLocaleDateString('pt-BR') : 'N/A';
-            } else if (Array.isArray(value) && value[0]?.signedPath) { // Para anexos
-                return `<p><strong>${label}:</strong> <a href="${NocoDB_BaseURL}/${value[0].signedPath}" target="_blank" class="text-brand-gold hover:underline">Ver Anexo</a></p>`;
-            } else if (typeof value === 'object' && value !== null && value.Nome) { // Para objetos relacionados (ex: Consultor)
-                displayValue = value.Nome;
-            } else {
-                displayValue = value || 'N/A';
+            if (displayValue === null) {
+                if (Array.isArray(value) && value[0]?.signedPath) {
+                    return `<p><strong>${label}:</strong> <a href="${NocoDB_BaseURL}/${value[0].signedPath}" target="_blank" class="text-brand-gold hover:underline">Ver Anexo</a></p>`;
+                } else if (typeof value === 'object' && value !== null && value.Nome) {
+                    displayValue = value.Nome;
+                } else {
+                    displayValue = value || 'N/A';
+                }
             }
 
             return `<p><strong>${label}:</strong> ${displayValue}</p>`;
         }).join('');
-        // --- FIM DA ALTERAÇÃO ---
     }
     
     document.getElementById('modal-content').innerHTML = contentHTML;
@@ -3918,6 +4343,155 @@ function openDocFormModal(clientId, doc = null) {
         updateCustosDashboard(); // Adiciona a chamada para a nova aba "Custos"
         updateVisitsDashboard();
     }
+function renderValidadesDadosDashboard() {
+    if (!validadesData || validadesData.length === 0) {
+        const container = document.getElementById('dados-content');
+        if(container) container.innerHTML = '<p class="text-center text-gray-500">Não há dados de validades para gerar a análise.</p>';
+        return;
+    }
+    // Chamadas para as funções de cada seção do dashboard
+    updateValidadesKPIs(validadesData);
+    updateStatusGeralChart(validadesData);
+    renderAcoesCriticasTable(validadesData);
+    updateConsultorCargaChart(validadesData);
+    renderConsultorRankingTable(validadesData);
+    renderClientesCriticosTable(validadesData);
+    updateParetoChart(validadesData);
+}
+
+// Atualiza os 4 cards de KPIs
+function updateValidadesKPIs(data) {
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0); // Zera a hora para comparações de data
+    const data30dias = new Date(hoje);
+    data30dias.setDate(hoje.getDate() + 30);
+
+    const totalVencidos = data.filter(v => v.Status === 'Vencido').length;
+    const vencendoEm30Dias = data.filter(v => {
+        if (!v.Validade || v.Status === 'Vencido' || v.Status === 'Vigente') return false;
+        const dataValidade = new Date(v.Validade + 'T00:00:00');
+        return dataValidade >= hoje && dataValidade <= data30dias;
+    }).length;
+    const totalPendentes = data.filter(v => v.Status === 'Pendente').length;
+    const emProcesso = data.filter(v => v.Status === 'Em processo').length;
+
+    document.getElementById('dados-kpi-vencidos').textContent = totalVencidos;
+    document.getElementById('dados-kpi-vencendo').textContent = vencendoEm30Dias;
+    document.getElementById('dados-kpi-pendentes').textContent = totalPendentes;
+    document.getElementById('dados-kpi-em-processo').textContent = emProcesso;
+}
+
+// Renderiza o gráfico de barras com o status geral
+function updateStatusGeralChart(data) {
+    const ctx = document.getElementById('validades-status-geral-chart').getContext('2d');
+    const isDark = document.documentElement.classList.contains('dark');
+    const labelColor = isDark ? '#e5e7eb' : '#373737';
+
+    const statusCounts = data.reduce((acc, item) => {
+        acc[item.Status] = (acc[item.Status] || 0) + 1;
+        return acc;
+    }, {});
+    
+    const labels = Object.keys(statusCounts);
+    const chartData = Object.values(statusCounts);
+    const backgroundColors = labels.map(status => ({
+        'Vigente': '#10B981', 'Vencido': '#EF4444', 'Pendente': '#F59E0B', 
+        'Em processo': '#3B82F6', 'Isenção': '#6B7280', 'Não se aplica': '#9CA3AF'
+    }[status] || '#A1A1AA'));
+
+    if (validadesStatusGeralChart) {
+        validadesStatusGeralChart.data.labels = labels;
+        validadesStatusGeralChart.data.datasets[0].data = chartData;
+        validadesStatusGeralChart.data.datasets[0].backgroundColor = backgroundColors;
+        validadesStatusGeralChart.update();
+    } else {
+        validadesStatusGeralChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Contagem de Documentos',
+                    data: chartData,
+                    backgroundColor: backgroundColors,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { ticks: { color: labelColor, beginAtZero: true, stepSize: 1 } },
+                    x: { ticks: { color: labelColor } }
+                }
+            }
+        });
+    }
+}
+
+// Renderiza a tabela de ações críticas
+function renderAcoesCriticasTable(data) {
+    const tbody = document.getElementById('validades-acoes-criticas-body');
+    const cardsContainer = document.getElementById('validades-acoes-criticas-cards');
+    if (!tbody || !cardsContainer) return; // Garante que ambos os elementos existam
+
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    const data30dias = new Date(hoje);
+    data30dias.setDate(hoje.getDate() + 30);
+    
+    const calculateDaysRemaining = (dateStr) => {
+        if (!dateStr) return { text: 'N/A', days: Infinity };
+        const validadeDate = new Date(dateStr + 'T00:00:00');
+        const diffTime = validadeDate - hoje;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (diffDays < 0) return { text: `${Math.abs(diffDays)} dia(s) atrás`, days: diffDays };
+        if (diffDays === 0) return { text: 'Vence hoje', days: 0 };
+        return { text: `${diffDays} dia(s)`, days: diffDays };
+    };
+
+    const criticos = data.filter(v => {
+        if (v.Status === 'Vencido') return true;
+        if (!v.Validade) return false;
+        const dataValidade = new Date(v.Validade + 'T00:00:00');
+        return dataValidade >= hoje && dataValidade <= data30dias && v.Status !== 'Vigente';
+    }).sort((a, b) => (calculateDaysRemaining(a.Validade).days) - (calculateDaysRemaining(b.Validade).days));
+
+    if (criticos.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Nenhum item crítico encontrado.</td></tr>';
+        cardsContainer.innerHTML = '<p class="text-center text-gray-500">Nenhum item crítico encontrado.</p>';
+        return;
+    }
+
+    let tableHTML = '';
+    let cardsHTML = '';
+
+    criticos.forEach(v => {
+        const daysInfo = calculateDaysRemaining(v.Validade);
+        const rowClass = v.Status === 'Vencido' || daysInfo.days < 0 ? 'bg-red-50 dark:bg-red-900/30' : 'bg-yellow-50 dark:bg-yellow-900/30';
+        
+        tableHTML += `
+            <tr class="${rowClass} border-b dark:border-gray-700">
+                <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">${v.Clientes?.Nome || 'N/A'}</td>
+                <td class="px-6 py-4">${v.Tipo}</td>
+                <td class="px-6 py-4">${v.Validade ? new Date(v.Validade + 'T00:00:00').toLocaleDateString('pt-BR') : 'N/A'}</td>
+                <td class="px-6 py-4 font-bold">${daysInfo.text}</td>
+                <td class="px-6 py-4">${v.Consultores?.Nome || 'N/A'}</td>
+            </tr>`;
+        
+        cardsHTML += `
+            <div class="p-4 rounded-lg shadow ${rowClass}">
+                <p class="font-bold text-lg text-gray-900 dark:text-white">${v.Clientes?.Nome || 'N/A'}</p>
+                <p class="text-sm text-gray-700 dark:text-gray-300">${v.Tipo}</p>
+                <div class="mt-2 pt-2 border-t dark:border-gray-600 text-sm space-y-1">
+                    <p><strong>Validade:</strong> ${v.Validade ? new Date(v.Validade + 'T00:00:00').toLocaleDateString('pt-BR') : 'N/A'}</p>
+                    <p><strong>Dias para Vencer:</strong> <span class="font-bold">${daysInfo.text}</span></p>
+                    <p><strong>Consultor:</strong> ${v.Consultores?.Nome || 'N/A'}</p>
+                </div>
+            </div>`;
+    });
+
+    tbody.innerHTML = tableHTML;
+    cardsContainer.innerHTML = cardsHTML;
+}
     function setDateFilter(e, p) { const period=e.target.dataset.period; document.querySelectorAll(`.dash-${p}-quick-filter`).forEach(b=>b.classList.remove('filter-btn-active')); e.target.classList.add('filter-btn-active'); const endI=document.getElementById(`dash-${p}-end`), startI=document.getElementById(`dash-${p}-start`), today=new Date(); endI.valueAsDate=today; let sD=new Date(); if(period==='week')sD.setDate(today.getDate()-today.getDay()); else if(period==='month')sD=new Date(today.getFullYear(),today.getMonth(),1); else if(period==='year')sD=new Date(today.getFullYear(),0,1); startI.valueAsDate=sD; if(p==='fin')updateFinanceDashboard(); else updateVisitsDashboard();}
     function updateFinanceDashboard() { const s=document.getElementById('dash-fin-status').value, st=document.getElementById('dash-fin-start').value, e=document.getElementById('dash-fin-end').value; const fR=receitasData.filter(r=>(!s||r.Status===s)&&(!st||r.Vencimento>=st)&&(!e||r.Vencimento<=e)); const fC=custosData.filter(c=>(!s||c.Status===s)&&(!st||c.Vencimento>=st)&&(!e||c.Vencimento<=e)); const tR=fR.reduce((sum,r)=>sum+(r.Valor||0),0), tC=fC.reduce((sum,c)=>sum+(c.Valor||0),0), bal=tR-tC; const tRP=receitasData.filter(r=>r.Status==='Pendente'&&(!st||r.Vencimento>=st)&&(!e||r.Vencimento<=e)).reduce((sum,r)=>sum+(r.Valor||0),0); const tCP=custosData.filter(c=>c.Status==='Pendente'&&(!st||c.Vencimento>=st)&&(!e||c.Vencimento<=e)).reduce((sum,c)=>sum+(c.Valor||0),0); const f=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); document.getElementById('dash-revenue').textContent=f(tR); document.getElementById('dash-costs').textContent=f(tC); document.getElementById('dash-balance').textContent=f(bal); document.getElementById('dash-revenue-pending').textContent=f(tRP); document.getElementById('dash-costs-pending').textContent=f(tCP); document.getElementById('dash-balance').classList.toggle('text-green-500',bal>=0); document.getElementById('dash-balance').classList.toggle('text-red-500',bal<0); updateFinanceChart(fR,fC); }
         function updateTopClientsByCount(visits) {
@@ -4804,26 +5378,7 @@ function generateInsights() {
         ['filter-validade-start-date', 'filter-validade-end-date', 'filter-validade-consultor', 'filter-validade-cliente', 'filter-validade-status', 'filter-validade-tipo'].forEach(id => {
         document.getElementById(id)?.addEventListener('change', applyAndRenderValidades);
     });
-
-    // Adicione o listener para os cliques nas abas de "Validades"
-    document.getElementById('validades-tabs')?.addEventListener('click', e => {
-        if(e.target.classList.contains('validades-tab-btn')) {
-            // Remove a classe ativa de todos os botões da aba
-            document.querySelectorAll('.validades-tab-btn').forEach(btn => {
-                btn.classList.remove('border-brand-gold', 'text-brand-gold');
-                btn.classList.add('border-transparent');
-            });
-            // Adiciona a classe ativa ao botão clicado
-            e.target.classList.add('border-brand-gold', 'text-brand-gold');
-
-            // Esconde todos os conteúdos das abas
-            document.querySelectorAll('.validades-tab-content').forEach(content => {
-                content.classList.add('hidden');
-            });
-            // Mostra o conteúdo correspondente
-            document.getElementById(e.target.dataset.target)?.classList.remove('hidden');
-        }
-    });
+   
 document.getElementById('show-validade-form')?.addEventListener('click', () => setupSubFormToggle('validades-history-container', 'validade-form-container'));
         ['filter-reembolso-start-date', 'filter-reembolso-end-date', 'filter-reembolso-consultor', 'filter-reembolso-status'].forEach(id => {
     document.getElementById(id)?.addEventListener('change', applyAndRenderReembolsos);
