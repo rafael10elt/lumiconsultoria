@@ -15,8 +15,8 @@
 
     <style>
 :root {
-  --brand-gold: #BFA16A;
-  --brand-dark: #373737;
+  --brand-gold: #FB7A04;
+  --brand-dark: #235C7B;
   
 }
 
@@ -1751,7 +1751,7 @@ document.addEventListener('DOMContentLoaded', function() {
  function updateConsultorCargaChart(data) {
     const ctx = document.getElementById('validades-consultor-carga-chart').getContext('2d');
     const isDark = document.documentElement.classList.contains('dark');
-    const labelColor = isDark ? '#e5e7eb' : '#373737';
+    const labelColor = isDark ? '#e5e7eb' : '#039EE0';
 
     // --- INÍCIO DA CORREÇÃO ---
     // 1. Detecta se a tela é mobile
@@ -1919,7 +1919,7 @@ function renderClientesCriticosTable(data) {
 function updateParetoChart(data) {
     const ctx = document.getElementById('validades-pareto-chart').getContext('2d');
     const isDark = document.documentElement.classList.contains('dark');
-    const labelColor = isDark ? '#e5e7eb' : '#373737';
+    const labelColor = isDark ? '#e5e7eb' : '#039EE0';
     
     const criticalStatus = ['Vencido', 'Pendente'];
     const stats = data.filter(item => criticalStatus.includes(item.Status))
@@ -2013,7 +2013,7 @@ function updateParetoChart(data) {
 
         const ctx = document.getElementById('receitas-by-cliente-chart').getContext('2d');
         const isDark = document.documentElement.classList.contains('dark');
-        const labelColor = isDark ? '#e5e7eb' : '#373737';
+        const labelColor = isDark ? '#e5e7eb' : '#039EE0';
 
         if (receitasByClienteChart) {
             receitasByClienteChart.data.labels = labels;
@@ -2096,7 +2096,7 @@ function updateParetoChart(data) {
 
         const ctx = document.getElementById('custos-by-credor-chart').getContext('2d');
         const isDark = document.documentElement.classList.contains('dark');
-        const labelColor = isDark ? '#e5e7eb' : '#373737';
+        const labelColor = isDark ? '#e5e7eb' : '#039EE0';
 
         if (custosByCredorChart) {
             custosByCredorChart.data.labels = labels;
@@ -4385,7 +4385,7 @@ function updateValidadesKPIs(data) {
 function updateStatusGeralChart(data) {
     const ctx = document.getElementById('validades-status-geral-chart').getContext('2d');
     const isDark = document.documentElement.classList.contains('dark');
-    const labelColor = isDark ? '#e5e7eb' : '#373737';
+    const labelColor = isDark ? '#e5e7eb' : '#039EE0';
 
     const statusCounts = data.reduce((acc, item) => {
         acc[item.Status] = (acc[item.Status] || 0) + 1;
@@ -4521,7 +4521,7 @@ function renderAcoesCriticasTable(data) {
         const ctx = document.getElementById('clients-visits-chart').getContext('2d');
         const isDark = document.documentElement.classList.contains('dark');
         const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-        const labelColor = isDark ? '#e5e7eb' : '#373737';
+        const labelColor = isDark ? '#e5e7eb' : '#039EE0';
 
         if (clientsVisitsChart) {
             clientsVisitsChart.data.labels = labels;
@@ -4583,7 +4583,7 @@ function renderAcoesCriticasTable(data) {
         const ctx = document.getElementById('clients-hours-chart').getContext('2d');
         const isDark = document.documentElement.classList.contains('dark');
         const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-        const labelColor = isDark ? '#e5e7eb' : '#373737';
+        const labelColor = isDark ? '#e5e7eb' : '#039EE0';
 
         if (clientsHoursChart) {
             clientsHoursChart.data.labels = labels;
@@ -4661,8 +4661,8 @@ function renderAcoesCriticasTable(data) {
     tCL.innerHTML=sC.map(([n,s])=>`<li class="flex justify-between items-center"><span>${n}</span><span class="font-bold">${s.count} visitas</span></li>`).join('')||`<li>Nenhum dado.</li>`; 
 }
     function calculateDuration(v) { if(v.Status==='Concluída'&&v.CheckIn&&v.CheckOut)return(new Date(v.CheckOut)-new Date(v.CheckIn))/60000; if(v.HoraInicio&&v.HoraFim){const[sH,sM]=v.HoraInicio.split(':'),[eH,eM]=v.HoraFim.split(':'); return(new Date(0,0,0,eH,eM)-new Date(0,0,0,sH,sM))/60000;} return 0;}
-    function updateFinanceChart(r,c) { const ctx=document.getElementById('finance-chart').getContext('2d'), iD=document.documentElement.classList.contains('dark'), gC=iD?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.1)', lC=iD?'#e5e7eb':'#373737', dM={}; const p=(d,t)=>{d.forEach(i=>{const m=new Date(i.Vencimento+'T00:00:00').toLocaleString('pt-BR',{month:'short',year:'2-digit'}); dM[m]=dM[m]||{receitas:0,custos:0}; dM[m][t]+=(i.Valor||0);});}; p(r,'receitas'); p(c,'custos'); const sM=Object.keys(dM).sort((a,b)=>{const[m1,y1]=a.split('/'),[m2,y2]=b.split('/'); return new Date(`20${y1}`,'jan,fev,mar,abr,mai,jun,jul,ago,set,out,nov,dez'.split(',').indexOf(m1.toLowerCase()),1)-new Date(`20${y2}`,'jan,fev,mar,abr,mai,jun,jul,ago,set,out,nov,dez'.split(',').indexOf(m2.toLowerCase()),1);}); const cD={labels:sM, datasets:[{label:'Receitas',data:sM.map(m=>dM[m].receitas),backgroundColor:'rgba(59,130,246,0.7)'},{label:'Custos',data:sM.map(m=>dM[m].custos),backgroundColor:'rgba(239,68,68,0.7)'}]}; if(financeChart){Object.assign(financeChart.data,cD); Object.assign(financeChart.options.scales.x.ticks,{color:lC}); Object.assign(financeChart.options.scales.y.ticks,{color:lC}); Object.assign(financeChart.options.scales.x.grid,{color:gC}); Object.assign(financeChart.options.scales.y.grid,{color:gC}); Object.assign(financeChart.options.plugins.legend.labels,{color:lC}); financeChart.update();}else{financeChart=new Chart(ctx,{type:'bar',data:cD,options:{responsive:true,scales:{x:{ticks:{color:lC},grid:{color:gC}},y:{ticks:{color:lC},grid:{color:gC}}},plugins:{legend:{labels:{color:lC}}}}});}}
-    function updateVisitsStatusChart(v) { const ctx=document.getElementById('visits-status-chart').getContext('2d'), iD=document.documentElement.classList.contains('dark'), lC=iD?'#e5e7eb':'#373737', sC=v.reduce((a,v)=>{a[v.Status]=(a[v.Status]||0)+1; return a;},{}); const cD={labels:Object.keys(sC), datasets:[{data:Object.values(sC), backgroundColor:Object.keys(sC).map(s=>({'Agendada':'#3B82F6','Concluída':'#10B981','Em Andamento':'#F59E0B'}[s]||'#6B7280'))}]}; if(visitsStatusChart){Object.assign(visitsStatusChart.data,cD); Object.assign(visitsStatusChart.options.plugins.legend.labels,{color:lC}); visitsStatusChart.update();}else{visitsStatusChart=new Chart(ctx,{type:'doughnut',data:cD,options:{responsive:true,plugins:{legend:{position:'top',labels:{color:lC}}}}});}}
+    function updateFinanceChart(r,c) { const ctx=document.getElementById('finance-chart').getContext('2d'), iD=document.documentElement.classList.contains('dark'), gC=iD?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.1)', lC=iD?'#e5e7eb':'#039EE0', dM={}; const p=(d,t)=>{d.forEach(i=>{const m=new Date(i.Vencimento+'T00:00:00').toLocaleString('pt-BR',{month:'short',year:'2-digit'}); dM[m]=dM[m]||{receitas:0,custos:0}; dM[m][t]+=(i.Valor||0);});}; p(r,'receitas'); p(c,'custos'); const sM=Object.keys(dM).sort((a,b)=>{const[m1,y1]=a.split('/'),[m2,y2]=b.split('/'); return new Date(`20${y1}`,'jan,fev,mar,abr,mai,jun,jul,ago,set,out,nov,dez'.split(',').indexOf(m1.toLowerCase()),1)-new Date(`20${y2}`,'jan,fev,mar,abr,mai,jun,jul,ago,set,out,nov,dez'.split(',').indexOf(m2.toLowerCase()),1);}); const cD={labels:sM, datasets:[{label:'Receitas',data:sM.map(m=>dM[m].receitas),backgroundColor:'rgba(59,130,246,0.7)'},{label:'Custos',data:sM.map(m=>dM[m].custos),backgroundColor:'rgba(239,68,68,0.7)'}]}; if(financeChart){Object.assign(financeChart.data,cD); Object.assign(financeChart.options.scales.x.ticks,{color:lC}); Object.assign(financeChart.options.scales.y.ticks,{color:lC}); Object.assign(financeChart.options.scales.x.grid,{color:gC}); Object.assign(financeChart.options.scales.y.grid,{color:gC}); Object.assign(financeChart.options.plugins.legend.labels,{color:lC}); financeChart.update();}else{financeChart=new Chart(ctx,{type:'bar',data:cD,options:{responsive:true,scales:{x:{ticks:{color:lC},grid:{color:gC}},y:{ticks:{color:lC},grid:{color:gC}}},plugins:{legend:{labels:{color:lC}}}}});}}
+    function updateVisitsStatusChart(v) { const ctx=document.getElementById('visits-status-chart').getContext('2d'), iD=document.documentElement.classList.contains('dark'), lC=iD?'#e5e7eb':'#039EE0', sC=v.reduce((a,v)=>{a[v.Status]=(a[v.Status]||0)+1; return a;},{}); const cD={labels:Object.keys(sC), datasets:[{data:Object.values(sC), backgroundColor:Object.keys(sC).map(s=>({'Agendada':'#3B82F6','Concluída':'#10B981','Em Andamento':'#F59E0B'}[s]||'#6B7280'))}]}; if(visitsStatusChart){Object.assign(visitsStatusChart.data,cD); Object.assign(visitsStatusChart.options.plugins.legend.labels,{color:lC}); visitsStatusChart.update();}else{visitsStatusChart=new Chart(ctx,{type:'doughnut',data:cD,options:{responsive:true,plugins:{legend:{position:'top',labels:{color:lC}}}}});}}
     const sConf={'Agendada':{color:'blue',label:'Agendada'},'Em Andamento':{color:'yellow',label:'Em Andamento'},'Concluída':{color:'green',label:'Concluída'}};
 function applyFilters() {
     const s = document.getElementById('filter-start-date').value,
