@@ -2256,7 +2256,7 @@ async function fetchReembolsos() {
     async function handleLogin(e) { e.preventDefault(); const username = document.getElementById('username').value, password = document.getElementById('password').value; if (!username || !password) { alert('Por favor, preencha usuário e senha.'); return; } showLoadingOverlay('Autenticando...'); const user = await authenticateUser(username, password); if (user) { sessionStorage.setItem('loggedInUser', JSON.stringify(user)); await initializeUserSession(user); } else { hideLoadingOverlay(); alert('Usuário ou senha inválidos.'); } }
  async function initializeUserSession(user) {
     loggedInUser = user;
-    document.getElementById('logged-user-name').textContent = loggedInUser.Nome;
+    document.getElementById('logged-user-name').textContent = loggedInUser.Login;
     document.querySelector('#logged-user-name + p').textContent = loggedInUser.Role || 'Consultor';
     const userAvatar = document.querySelector('#logged-user-name').closest('div').nextElementSibling;
     const consultorFilterWrapper = document.getElementById('dash-visit-consultor-wrapper');
