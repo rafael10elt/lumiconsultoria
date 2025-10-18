@@ -747,6 +747,10 @@ body {
                                             <option value="Pago">Pago</option>
                                         </select>
                                     </div>
+                                     <div class="md:col-span-2 flex items-center pt-4">
+        <input id="receita-recorrente-form" type="checkbox" value="" class="w-4 h-4 text-brand-gold bg-gray-100 border-gray-300 rounded focus:ring-brand-gold dark:focus:ring-brand-gold dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+        <label for="receita-recorrente-form" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Esta é uma receita recorrente</label>
+    </div>
                                     <div class="md:col-span-2">
                                         <label for="receita-obs" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Observação</label>
                                         <textarea id="receita-obs" rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-brand-gold focus:border-brand-gold dark:bg-gray-700 dark:border-gray-600"></textarea>
@@ -823,6 +827,10 @@ body {
                                             <option value="Pago">Pago</option>
                                         </select>
                                     </div>
+                                    <div class="md:col-span-2 flex items-center pt-4">
+        <input id="custo-recorrente-form" type="checkbox" value="" class="w-4 h-4 text-brand-gold bg-gray-100 border-gray-300 rounded focus:ring-brand-gold dark:focus:ring-brand-gold dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+        <label for="custo-recorrente-form" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Este é um custo recorrente</label>
+    </div>
                                     <div class="md:col-span-2">
                                         <label for="custo-obs" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Observação</label>
                                         <textarea id="custo-obs" rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-brand-gold focus:border-brand-gold dark:bg-gray-700 dark:border-gray-600"></textarea>
@@ -2283,20 +2291,50 @@ function renderModalCatalogoGrid(category = 'Todos') {
     // --- Funções de Carregamento de Dados (Fetch) ---
 async function fetchAllData() {
     showLoadingOverlay('Carregando dados...');
-   await Promise.all([ fetchConsultores(), fetchClientes(), fetchCustos(), fetchItensCatalogo(), fetchClienteDocs(), fetchReembolsos(), fetchValidades(), fetchServicos() ]);
-    await Promise.all([ fetchVisitas(), fetchReceitas(), fetchRequisicoes(), fetchFerias(), fetchAtestados(), fetchEpis(), fetchAtivos(), fetchRequisicoesItens() ]);
+   
+    await Promise.all([ 
+        fetchConsultores(), fetchClientes(), fetchCustos(), fetchReceitas(), // Traz Receitas junto com Custos
+        fetchItensCatalogo(), fetchClienteDocs(), fetchReembolsos(), 
+        fetchValidades(), fetchServicos() 
+    ]);
+
+    // Verifica e gera custos recorrentes
+    const custosForamGerados = await verificarEGerarCustosRecorrentes();
+    if (custosForamGerados) {
+        await fetchCustos(); // Recarrega se algo foi criado
+    }
+
+    // --- CÓDIGO NOVO ---
+    // Verifica e gera receitas recorrentes
+    const receitasForamGeradas = await verificarEGerarReceitasRecorrentes();
+    if (receitasForamGeradas) {
+        await fetchReceitas(); // Recarrega se algo foi criado
+    }
+    // --- FIM DO CÓDIGO NOVO ---
     
+    // Continua carregando o restante dos dados
+    await Promise.all([ 
+        fetchVisitas(), 
+        // fetchReceitas(), // Removido daqui pois já foi carregado
+        fetchRequisicoes(), 
+        fetchFerias(), 
+        fetchAtestados(), 
+        fetchEpis(), 
+        fetchAtivos(), 
+        fetchRequisicoesItens() 
+    ]);
+    
+    // O resto da função continua como antes...
     renderConsultores();
     applyClienteFilters();
     populateConsultantSelects();
+    // ... e assim por diante
     const consultorFilterVisitas = document.getElementById('filter-consultor');
     if (consultorFilterVisitas) {
         if (loggedInUser && loggedInUser.Role === 'Consultor') {
-            // Se for Consultor, define seu ID no filtro e o desabilita
             consultorFilterVisitas.value = loggedInUser.Id;
             consultorFilterVisitas.disabled = true;
         } else {
-            // Se for Admin/Gestor, garante que o filtro esteja habilitado
             consultorFilterVisitas.disabled = false;
         }
     }
@@ -2304,20 +2342,15 @@ async function fetchAllData() {
     populateSelectWithOptions('#report-consultor', consultoresData, 'Id', 'Nome', true);
     populateSelectWithOptions('#report-cliente', clientesData, 'Id', 'Nome', true);
 
-    // --- INÍCIO DA ALTERAÇÃO ---
-    // Lógica movida para cá. É executada DEPOIS que populateConsultantSelects() já criou as opções.
     if (loggedInUser && loggedInUser.Role === 'Consultor') { 
-        // Se NÃO for admin, pré-seleciona e desabilita os filtros.
         const consultorFilterVisitas = document.getElementById('filter-consultor');
         const consultorFilterReqs = document.getElementById('filter-req-consultor');              
     } else {
-        // Se FOR admin, garante que os filtros estejam habilitados e sem valor selecionado.
         const consultorFilterVisitas = document.getElementById('filter-consultor');
         const consultorFilterReqs = document.getElementById('filter-req-consultor');
 
         if (consultorFilterVisitas) {
             consultorFilterVisitas.disabled = false;
-            // A linha abaixo garante que, se um admin logar após um não-admin, o filtro seja limpo.
             consultorFilterVisitas.value = '';
         }
         if (consultorFilterReqs) {
@@ -2325,8 +2358,7 @@ async function fetchAllData() {
             consultorFilterReqs.value = '';
         }
     }
-    // --- FIM DA ALTERAÇÃO ---
-
+    
     updateAllCounters();
     
     applyAndRenderReceitas();
@@ -2348,7 +2380,6 @@ async function fetchAllData() {
     
     hideLoadingOverlay();
 }
-
     async function fetchConsultores() {
         const result = await nocoFetch('Consultores?nested[all]=true');
         if (result && result.list) {
@@ -2814,10 +2845,16 @@ function createClienteCard(c) {
 
     data.forEach(r => {
         const statusClass = r.Status === 'Pago' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800';
+
+        // --- CÓDIGO ATUALIZADO ---
+        const recorrenteClass = r.Recorrente ? 'text-blue-500' : 'text-gray-400';
+        const recorrenteTitle = r.Recorrente ? 'Desativar recorrência' : 'Ativar recorrência';
+        
         const actionsHTML = `
-            <button class="table-details-btn text-gray-500" data-type="receita"><i class="fas fa-eye"></i></button>
-            <button class="table-edit-btn text-blue-500" data-type="receita"><i class="fas fa-edit"></i></button>
-            <button class="table-delete-btn text-red-500" data-type="receita"><i class="fas fa-trash"></i></button>`;
+            <button class="table-details-btn text-gray-500" data-type="receita" title="Ver Detalhes"><i class="fas fa-eye"></i></button>
+            <button class="table-edit-btn text-blue-500" data-type="receita" title="Editar"><i class="fas fa-edit"></i></button>
+            <button class="toggle-receita-recorrente-btn ${recorrenteClass}" data-id="${r.Id}" data-recorrente="${!!r.Recorrente}" title="${recorrenteTitle}"><i class="fas fa-sync-alt"></i></button>
+            <button class="table-delete-btn text-red-500" data-type="receita" title="Apagar"><i class="fas fa-trash"></i></button>`;
 
         // Tabela Desktop
         tbody.innerHTML += `
@@ -2854,10 +2891,15 @@ function renderCustos(data = custosData) {
 
     data.forEach(c => {
         const statusClass = c.Status === 'Pago' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800';
+        
+        const recorrenteClass = c.Recorrente ? 'text-blue-500' : 'text-gray-400';
+        const recorrenteTitle = c.Recorrente ? 'Custo Recorrente (Clique para desativar)' : 'Custo Não Recorrente (Clique para ativar)';
+
         const actionsHTML = `
-            <button class="table-details-btn text-gray-500" data-type="custo"><i class="fas fa-eye"></i></button>
-            <button class="table-edit-btn text-blue-500" data-type="custo"><i class="fas fa-edit"></i></button>
-            <button class="table-delete-btn text-red-500" data-type="custo"><i class="fas fa-trash"></i></button>`;
+            <button class="table-details-btn text-gray-500" data-type="custo" title="Ver Detalhes"><i class="fas fa-eye"></i></button>
+            <button class="table-edit-btn text-blue-500" data-type="custo" title="Editar"><i class="fas fa-edit"></i></button>
+            <button class="toggle-recorrente-btn ${recorrenteClass}" data-id="${c.Id}" data-recorrente="${!!c.Recorrente}" title="${recorrenteTitle}"><i class="fas fa-sync-alt"></i></button>
+            <button class="table-delete-btn text-red-500" data-type="custo" title="Apagar"><i class="fas fa-trash"></i></button>`;
 
         // Tabela Desktop
         tbody.innerHTML += `
@@ -3089,235 +3131,253 @@ function applyAndRenderValidades() {
 
         renderConsultores(filteredData);
     }
+    async function handleToggleReceitaRecorrente(btn) {
+    const id = btn.dataset.id;
+    const isRecorrente = btn.dataset.recorrente === 'true';
+    const newRecorrenteState = !isRecorrente;
+    
+    const confirmMessage = newRecorrenteState 
+        ? 'Deseja marcar esta receita como recorrente e gerar a fatura para o próximo mês?'
+        : 'Deseja desativar a recorrência desta receita? Faturas futuras não serão mais geradas automaticamente a partir desta.';
+
+    if (confirm(confirmMessage)) {
+        showLoadingOverlay('Atualizando...');
+        const result = await nocoFetch(`Receitas/${id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ Recorrente: newRecorrenteState })
+        });
+        
+        if (result) {
+            if (newRecorrenteState) {
+                const currentReceita = receitasData.find(r => r.Id == id);
+                if (currentReceita) {
+                    await gerarProximaReceitaRecorrente(currentReceita);
+                }
+            }
+            await fetchReceitas();
+            applyAndRenderReceitas();
+        } else {
+            alert('Falha ao atualizar o status de recorrência.');
+        }
+        hideLoadingOverlay();
+    }
+}
+
+    async function handleToggleRecorrente(btn) {
+    const id = btn.dataset.id;
+    const isRecorrente = btn.dataset.recorrente === 'true';
+    const newRecorrenteState = !isRecorrente;
+    
+    const confirmMessage = newRecorrenteState 
+        ? 'Deseja marcar este custo como recorrente e gerar a fatura para o próximo mês?'
+        : 'Deseja desativar a recorrência deste custo? Faturas futuras não serão mais geradas automaticamente a partir deste.';
+
+    if (confirm(confirmMessage)) {
+        showLoadingOverlay('Atualizando...');
+        const result = await nocoFetch(`Custos/${id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ Recorrente: newRecorrenteState })
+        });
+        
+        if (result) {
+            // Se ativou a recorrência, chama a função para gerar o próximo.
+            if (newRecorrenteState) {
+                const currentCost = custosData.find(c => c.Id == id);
+                if(currentCost) {
+                    await gerarProximoCustoRecorrente(currentCost);
+                }
+            }
+            // Atualiza os dados e a tela
+            await fetchCustos();
+            applyAndRenderCustos();
+        } else {
+            alert('Falha ao atualizar o status de recorrência.');
+        }
+        hideLoadingOverlay();
+    }
+}
     // --- Lógica de Submissão de Formulários (CRUD) ---
     async function handleFormSubmit(e) {
-        e.preventDefault();
-        const form = e.target;
-        let endpoint = '', body = {}, id = null, callback = null;
+    e.preventDefault();
+    const form = e.target;
+    const id = form.dataset.id || (form.querySelector('input[type="hidden"]') ? form.querySelector('input[type="hidden"]').value : null);
+    const method = id ? 'PATCH' : 'POST';
+    let endpoint = '';
+    let body = {};
+    let callback = null;
 
-        const rhSubFormIds = ['ferias-form', 'atestados-form', 'epis-form', 'ativos-form'];
-        
+    showLoadingOverlay('Salvando...');
+
+    try {
+        // --- PREPARAÇÃO DOS DADOS (dentro do switch) ---
         switch (form.id) {
-          case 'validade-form':
-            id = form.dataset.id;
-            const clienteIdValidade = parseInt(form.querySelector('#validade-cliente').value);
-            const tipoValidade = form.querySelector('#validade-tipo-form').value;
+            case 'validade-form': {
+                endpoint = id ? `Validades/${id}` : 'Validades';
+                const clienteIdValidade = parseInt(form.querySelector('#validade-cliente').value);
+                const tipoValidade = form.querySelector('#validade-tipo-form').value;
 
-            const isDuplicate = validadesData.some(
-                v => v.Clientes?.Id == clienteIdValidade &&
-                     v.Tipo === tipoValidade &&
-                     v.Id != id 
-            );
-
-            if (isDuplicate) {
-                alert(`Erro: O cliente selecionado já possui um registro para o tipo de documento "${tipoValidade}".`);
-                return; 
-            }
-
-            endpoint = id ? `Validades/${id}` : 'Validades';
-            body = {
-                Validade: form.querySelector('#validade-data').value || null,
-                Tipo: tipoValidade,
-                Status: form.querySelector('#validade-status-form').value,
-                Observacao: form.querySelector('#validade-observacao').value
-            };
-            
-            const consultorIdValidade = parseInt(form.querySelector('#validade-consultor').value);
-            if (id) {
-                body.Consultores_id = consultorIdValidade;
-                body.Clientes_id = clienteIdValidade;
-            } else {
-                body.Consultores = { "Id": consultorIdValidade };
-                body.Clientes = { "Id": clienteIdValidade };
-            }
-
-            // --- INÍCIO DA ALTERAÇÃO ---
-            const anexoInput = form.querySelector('#validade-anexo');
-            if (anexoInput && anexoInput.files[0]) {
-                showLoadingOverlay('Enviando anexo...');
-                const anexoData = await uploadFile('Validades', 'Anexo', anexoInput.files[0]);
-                if (anexoData) {
-                    body.Anexo = [anexoData];
-                } else {
-                    hideLoadingOverlay();
-                    return; // Interrompe o salvamento se o upload falhar
+                if (!id && validadesData.some(v => v.Clientes?.Id == clienteIdValidade && v.Tipo === tipoValidade)) {
+                    throw new Error(`O cliente selecionado já possui um registro para o tipo "${tipoValidade}".`);
                 }
-            }
-            // --- FIM DA ALTERAÇÃO ---
-
-            callback = async () => { await fetchValidades(); applyAndRenderValidades(); };
-            break;
-            case 'reembolso-form':
-    id = form.dataset.id;
-    endpoint = id ? `Reembolsos/${id}` : 'Reembolsos';
-    body = {
-        Data: form.querySelector('#reembolso-data').value,
-        Valor: parseFloat(form.querySelector('#reembolso-valor').value),
-        Motivo: form.querySelector('#reembolso-motivo').value,
-        Status: form.querySelector('#reembolso-status-form').value,
-    };
-    const consultorIdReembolso = parseInt(form.querySelector('#reembolso-consultor').value);
-    if (id) {
-        body.Consultores_id = consultorIdReembolso;
-    } else {
-        body.Consultores = { "Id": consultorIdReembolso };
-    }
-
-    const anexoInputReembolso = form.querySelector('#reembolso-anexo');
-    if (anexoInputReembolso && anexoInputReembolso.files[0]) {
-        showLoadingOverlay('Enviando anexo...');
-        const anexoData = await uploadFile('Reembolsos', 'Anexo', anexoInputReembolso.files[0]);
-        if (anexoData) {
-            body.Anexo = [anexoData];
-        } else {
-            hideLoadingOverlay();
-            return;
-        }
-    }
-    callback = async () => { await fetchReembolsos(); applyAndRenderReembolsos(); };
-    break;
-    case 'servico-form':
-            id = form.dataset.id;
-            endpoint = id ? `Servicos/${id}` : 'Servicos';
-            body = {
-                Cliente: form.querySelector('#servico-cliente').value,
-                Cnpj: form.querySelector('#servico-cnpj').value,
-                Datacontratacao: form.querySelector('#servico-datacontratacao').value,
-                DataEntrega: form.querySelector('#servico-dataentrega').value || null,
-                Contato: form.querySelector('#servico-contato').value,
-                Valor: parseFloat(form.querySelector('#servico-valor').value) || 0,
-                Descricao: form.querySelector('#servico-descricao').value,
-                Observacao: form.querySelector('#servico-observacao').value,
-                Status: form.querySelector('#servico-status-form').value || 'Pendente',
-            };
-
-            const servicoAnexoInput = form.querySelector('#servico-anexo');
-            if (servicoAnexoInput && servicoAnexoInput.files[0]) {
-                showLoadingOverlay('Enviando anexo...');
-                const anexoData = await uploadFile('Servicos', 'Anexo', servicoAnexoInput.files[0]);
-                if (anexoData) {
-                    body.Anexo = [anexoData];
+                body = {
+                    Validade: form.querySelector('#validade-data').value || null,
+                    Tipo: tipoValidade,
+                    Status: form.querySelector('#validade-status-form').value,
+                    Observacao: form.querySelector('#validade-observacao').value
+                };
+                const consultorIdValidade = parseInt(form.querySelector('#validade-consultor').value);
+                if (id) {
+                    body.Consultores_id = consultorIdValidade;
+                    body.Clientes_id = clienteIdValidade;
                 } else {
-                    hideLoadingOverlay();
-                    return;
+                    body.Consultores = { "Id": consultorIdValidade };
+                    body.Clientes = { "Id": clienteIdValidade };
                 }
+                const anexoInput = form.querySelector('#validade-anexo');
+                if (anexoInput && anexoInput.files[0]) {
+                    const anexoData = await uploadFile('Validades', 'Anexo', anexoInput.files[0]);
+                    if (anexoData) body.Anexo = [anexoData];
+                }
+                callback = async () => { await fetchValidades(); applyAndRenderValidades(); hideSubFormToggle('validades-history-container', 'validade-form-container'); };
+                break;
             }
-            callback = async () => { await fetchServicos(); applyAndRenderServicos(); };
-            break;
-            case 'item-form':
-                id = form.dataset.id;
+            case 'reembolso-form': {
+                endpoint = id ? `Reembolsos/${id}` : 'Reembolsos';
+                body = {
+                    Data: form.querySelector('#reembolso-data').value,
+                    Valor: parseFloat(form.querySelector('#reembolso-valor').value),
+                    Motivo: form.querySelector('#reembolso-motivo').value,
+                    Status: form.querySelector('#reembolso-status-form').value,
+                };
+                const consultorIdReembolso = parseInt(form.querySelector('#reembolso-consultor').value);
+                if (id) { body.Consultores_id = consultorIdReembolso; } else { body.Consultores = { "Id": consultorIdReembolso }; }
+
+                const anexoInputReembolso = form.querySelector('#reembolso-anexo');
+                if (anexoInputReembolso && anexoInputReembolso.files[0]) {
+                    const anexoData = await uploadFile('Reembolsos', 'Anexo', anexoInputReembolso.files[0]);
+                    if (anexoData) body.Anexo = [anexoData];
+                }
+                callback = async () => { await fetchReembolsos(); applyAndRenderReembolsos(); hideSubFormToggle('reembolsos-history-container', 'reembolso-form-container'); };
+                break;
+            }
+            case 'servico-form': {
+                endpoint = id ? `Servicos/${id}` : 'Servicos';
+                body = {
+                    Cliente: form.querySelector('#servico-cliente').value,
+                    Cnpj: form.querySelector('#servico-cnpj').value,
+                    Datacontratacao: form.querySelector('#servico-datacontratacao').value,
+                    DataEntrega: form.querySelector('#servico-dataentrega').value || null,
+                    Contato: form.querySelector('#servico-contato').value,
+                    Valor: parseFloat(form.querySelector('#servico-valor').value) || 0,
+                    Descricao: form.querySelector('#servico-descricao').value,
+                    Observacao: form.querySelector('#servico-observacao').value,
+                    Status: form.querySelector('#servico-status-form').value || 'Pendente',
+                };
+                const servicoAnexoInput = form.querySelector('#servico-anexo');
+                if (servicoAnexoInput && servicoAnexoInput.files[0]) {
+                    const anexoData = await uploadFile('Servicos', 'Anexo', servicoAnexoInput.files[0]);
+                    if (anexoData) body.Anexo = [anexoData];
+                }
+                callback = async () => { await fetchServicos(); applyAndRenderServicos(); hideSubFormToggle('servicos-history-container', 'servico-form-container'); };
+                break;
+            }
+            case 'item-form': {
                 endpoint = id ? `Itens_Catalogo/${id}` : 'Itens_Catalogo';
                 const itemName = document.getElementById('item-name').value;
                 const itemCategory = form.querySelector('#item-category-input').value;
                 body = { Nome: itemName, Categoria: itemCategory, Tipo: 'Consumo' };
                 const itemFotoInput = document.getElementById('item-foto');
                 if (itemFotoInput && itemFotoInput.files[0]) {
-                    showLoadingOverlay('Enviando imagem do item...');
                     const fotoData = await uploadFile('Itens_Catalogo', 'Foto', itemFotoInput.files[0]);
                     if(fotoData) body.Foto = [fotoData];
                 }
                 callback = async () => { await fetchItensCatalogo(); renderItensDeRequisicao(); renderCategoryFilters(); hideModal(allElements.itemFormModal); };
                 break;
-            
-            case 'rh-form':
-            case 'cliente-form': {
-                const isConsultor = form.id === 'rh-form';
-                const table = isConsultor ? 'Consultores' : 'Clientes';
-                const fileInput = form.querySelector('input[type="file"]');
-                let fileData = null;
-
-                if (fileInput && fileInput.files[0]) {
-                    showLoadingOverlay('Enviando imagem...');
-                    fileData = await uploadFile(table, 'Foto', fileInput.files[0]);
-                    if (!fileData) { hideLoadingOverlay(); return; }
-                }
-
-                id = form.querySelector(isConsultor ? '#rh-id' : '#cliente-id')?.value;
+            }
+            case 'rh-form': {
+                const table = 'Consultores';
                 endpoint = id ? `${table}/${id}` : table;
-                
-                if(isConsultor) {
-                    body = { 
-                        Nome: form.querySelector('#rh-nome').value, 
-                        DataNascimento: form.querySelector('#rh-nasc').value || null, 
-                        Telefone: form.querySelector('#rh-tel').value, 
-                        Email: form.querySelector('#rh-email').value, 
-                        Login: form.querySelector('#rh-login').value, 
-                        InicioVinculo: form.querySelector('#rh-inicio').value || null, 
-                        FimVinculo: form.querySelector('#rh-fim').value || null, 
-                        CNPJ: form.querySelector('#rh-cnpj').value, 
-                        RazaoSocial: form.querySelector('#rh-razao').value, 
-                        ValorHora: parseFloat(form.querySelector('#rh-valor').value) || 0,
-                        Status: form.querySelector('#rh-status').value, 
-                        Role: form.querySelector('#rh-role').value, 
-                        Endereco: form.querySelector('#rh-endereco').value, 
-                        Observacao: form.querySelector('#rh-obs').value 
-                    };
-                    const senha = form.querySelector('#rh-senha').value; if (senha) body.Senha = senha;
-                    callback = async () => { await fetchConsultores(); applyConsultorFilters(); };
-                } else {
-                    body = { 
-                        Nome: form.querySelector('#cliente-nome').value, 
-                        RazaoSocial: form.querySelector('#cliente-razao').value, 
-                        CNPJ: form.querySelector('#cliente-cnpj').value, 
-                        Telefone: form.querySelector('#cliente-tel').value, 
-                        Email: form.querySelector('#cliente-email').value, 
-                        HorasContratadas: parseInt(form.querySelector('#cliente-horas').value) || 0,
-                        Valor: parseFloat(form.querySelector('#cliente-valor').value) || 0, 
-                        Status: form.querySelector('#cliente-status').value, 
-                        Responsavel: form.querySelector('#cliente-responsavel').value, 
-                        CPFResponsavel: form.querySelector('#cliente-cpf').value, 
-                        IPTU: form.querySelector('#cliente-iptu').value, 
-                        SenhaPortal: form.querySelector('#cliente-senha-portal').value, 
-                        Endereco: form.querySelector('#cliente-endereco').value, 
-                        Observacao: form.querySelector('#cliente-obs').value 
-                    };
-                    callback = async () => { await fetchClientes(); applyClienteFilters(); };
+                body = { Nome: form.querySelector('#rh-nome').value, DataNascimento: form.querySelector('#rh-nasc').value || null, Telefone: form.querySelector('#rh-tel').value, Email: form.querySelector('#rh-email').value, Login: form.querySelector('#rh-login').value, InicioVinculo: form.querySelector('#rh-inicio').value || null, FimVinculo: form.querySelector('#rh-fim').value || null, CNPJ: form.querySelector('#rh-cnpj').value, RazaoSocial: form.querySelector('#rh-razao').value, ValorHora: parseFloat(form.querySelector('#rh-valor').value) || 0, Status: form.querySelector('#rh-status').value, Role: form.querySelector('#rh-role').value, Endereco: form.querySelector('#rh-endereco').value, Observacao: form.querySelector('#rh-obs').value };
+                const senha = form.querySelector('#rh-senha').value; if (senha) body.Senha = senha;
+                const fileInput = form.querySelector('input[type="file"]');
+                if (fileInput && fileInput.files[0]) {
+                    const fileData = await uploadFile(table, 'Foto', fileInput.files[0]);
+                    if (fileData) body.Foto = [fileData];
                 }
-
-                if (fileData) body.Foto = [fileData];
+                callback = async () => { await fetchConsultores(); applyConsultorFilters(); hideFormToggle('rh-cards-container', 'rh-form-container'); };
                 break;
             }
-            
-            case 'receita-form':
-                id = form.dataset.id;
-                endpoint = id ? `Receitas/${id}` : 'Receitas';
-                body = { 
-                    Vencimento: form.querySelector('#receita-vencimento').value, 
-                    Valor: parseFloat(form.querySelector('#receita-valor').value), 
-                    Status: form.querySelector('#receita-status-form').value, 
-                    Observacao: form.querySelector('#receita-obs').value 
-                };
-
-                const clienteId = parseInt(form.querySelector('#receita-cliente-form').value);
-
-                if (id) { 
-                    body.Clientes_id = clienteId; 
-                } else { 
-                    body.Clientes = { "Id": clienteId }; 
+            case 'cliente-form': {
+                const table = 'Clientes';
+                endpoint = id ? `${table}/${id}` : table;
+                body = { Nome: form.querySelector('#cliente-nome').value, RazaoSocial: form.querySelector('#cliente-razao').value, CNPJ: form.querySelector('#cliente-cnpj').value, Telefone: form.querySelector('#cliente-tel').value, Email: form.querySelector('#cliente-email').value, HorasContratadas: parseInt(form.querySelector('#cliente-horas').value) || 0, Valor: parseFloat(form.querySelector('#cliente-valor').value) || 0, Status: form.querySelector('#cliente-status').value, Responsavel: form.querySelector('#cliente-responsavel').value, CPFResponsavel: form.querySelector('#cliente-cpf').value, IPTU: form.querySelector('#cliente-iptu').value, SenhaPortal: form.querySelector('#cliente-senha-portal').value, Endereco: form.querySelector('#cliente-endereco').value, Observacao: form.querySelector('#cliente-obs').value };
+                const fileInput = form.querySelector('input[type="file"]');
+                if (fileInput && fileInput.files[0]) {
+                    const fileData = await uploadFile(table, 'Foto', fileInput.files[0]);
+                    if (fileData) body.Foto = [fileData];
                 }
-                callback = async () => { await fetchReceitas(); applyAndRenderReceitas(); };
+                callback = async () => { await fetchClientes(); applyClienteFilters(); hideFormToggle('cliente-cards-container', 'cliente-form-container'); };
                 break;
-            case 'custo-form':
-                id = form.dataset.id;
+            }
+            case 'receita-form': {
+                endpoint = id ? `Receitas/${id}` : 'Receitas';
+                const clienteId = parseInt(form.querySelector('#receita-cliente-form').value);
+                body = {
+                    Vencimento: form.querySelector('#receita-vencimento').value,
+                    Valor: parseFloat(form.querySelector('#receita-valor').value),
+                    Status: form.querySelector('#receita-status-form').value,
+                    Observacao: form.querySelector('#receita-obs').value,
+                    Recorrente: form.querySelector('#receita-recorrente-form').checked
+                };
+                if (id) { body.Clientes_id = clienteId; } else { body.Clientes = { "Id": clienteId }; }
+                
+                const result = await nocoFetch(endpoint, { method, body: JSON.stringify(body) });
+                if (result) {
+                    if (body.Recorrente) {
+                        const clienteObj = clientesData.find(c => c.Id == clienteId);
+                        const receitaBase = id ? { ...body, Id: id, Clientes: clienteObj } : result;
+                        if (receitaBase) {
+                            await gerarProximaReceitaRecorrente(receitaBase);
+                        }
+                    }
+                    await fetchReceitas();
+                    applyAndRenderReceitas();
+                    hideSubFormToggle('receitas-history-container', 'receita-form-container');
+                    form.reset();
+                    delete form.dataset.id;
+                    updateAllDashboards();
+                }
+                hideLoadingOverlay();
+                return; // Finaliza a execução aqui
+            }
+            case 'custo-form': {
                 endpoint = id ? `Custos/${id}` : 'Custos';
-                body = { Credor: form.querySelector('#custo-credor').value, Vencimento: form.querySelector('#custo-vencimento').value, Valor: parseFloat(form.querySelector('#custo-valor').value), Status: form.querySelector('#custo-status-form').value, Observacao: form.querySelector('#custo-obs').value };
-                callback = async () => { await fetchCustos(); applyAndRenderCustos(); };
-                break;
-             case 'visita-form':
-                id = form.querySelector('#visita-id').value;
+                body = { Credor: form.querySelector('#custo-credor').value, Vencimento: form.querySelector('#custo-vencimento').value, Valor: parseFloat(form.querySelector('#custo-valor').value), Status: form.querySelector('#custo-status-form').value, Observacao: form.querySelector('#custo-obs').value, Recorrente: form.querySelector('#custo-recorrente-form').checked };
+                
+                const result = await nocoFetch(endpoint, { method, body: JSON.stringify(body) });
+                if (result) {
+                    if (body.Recorrente) {
+                        const custoBase = id ? { ...body, Id: id } : result;
+                        if (custoBase) {
+                            await gerarProximoCustoRecorrente(custoBase);
+                        }
+                    }
+                    await fetchCustos();
+                    applyAndRenderCustos();
+                    hideSubFormToggle('custos-history-container', 'custo-form-container');
+                    form.reset();
+                    delete form.dataset.id;
+                    updateAllDashboards();
+                }
+                hideLoadingOverlay();
+                return; // Finaliza a execução aqui
+            }
+            case 'visita-form': {
                 endpoint = id ? `Visitas/${id}` : 'Visitas';
                 const isRescheduling = form.querySelector('#is-rescheduling').value === 'true';
-
-                body = { 
-                    DataVisita: form.querySelector('#visita-data').value, 
-                    HoraInicio: form.querySelector('#visita-inicio').value, 
-                    HoraFim: form.querySelector('#visita-fim').value, 
-                    Atividades: form.querySelector('#visita-atividades').value 
-                };
-
+                body = { DataVisita: form.querySelector('#visita-data').value, HoraInicio: form.querySelector('#visita-inicio').value, HoraFim: form.querySelector('#visita-fim').value, Atividades: form.querySelector('#visita-atividades').value };
                 const consultorIdVisita = parseInt(form.querySelector('#visita-consultor').value);
                 const clienteIdVisita = parseInt(form.querySelector('#visita-cliente').value);
-
                 if (id) {
                     body.Consultores_id = consultorIdVisita;
                     body.Clientes_id = clienteIdVisita;
@@ -3326,191 +3386,99 @@ function applyAndRenderValidades() {
                         const newDate = form.querySelector('#visita-data').value;
                         const newStart = form.querySelector('#visita-inicio').value;
                         const newEnd = form.querySelector('#visita-fim').value;
-
                         if (originalVisit.DataVisita !== newDate || originalVisit.HoraInicio !== newStart || originalVisit.HoraFim !== newEnd) {
                             body.Remarcada = true;
                             body.Status = 'Agendada';
                         }
                     }
-
                 } else {
                     body.Consultores = { "Id": consultorIdVisita };
                     body.Clientes = { "Id": clienteIdVisita };
                 }
-
-                if(isRescheduling) { 
-                    body.Status = 'Agendada'; 
-                    body.Remarcada = true; 
-                } else if (!id) { 
-                    body.Status = 'Agendada'; 
-                }
-                
+                if(isRescheduling) { body.Status = 'Agendada'; body.Remarcada = true; } else if (!id) { body.Status = 'Agendada'; }
                 callback = async () => { await fetchVisitas(); applyFilters(); hideModal(allElements.visitaFormModal); };
                 break;
-            case 'ferias-form':
-                id = form.dataset.id;
-                endpoint = id ? `Ferias/${id}` : 'Ferias';
-                body = { 
-                    DataInicio: form.querySelector('#ferias-inicio').value, 
-                    DataRetorno: form.querySelector('#ferias-retorno').value 
-                };
-                const consultorIdFerias = parseInt(form.querySelector('#ferias-consultor').value);
-
-                if (id) {
-                    body.Consultores_id = consultorIdFerias;
-                } else {
-                    body.Consultores = { "Id": consultorIdFerias };
-                }
-
-                callback = async () => { await fetchFerias(); applyAndRenderFerias(); };
-                break;
-            case 'atestados-form':
-                id = form.dataset.id;
-                endpoint = id ? `Atestados/${id}` : 'Atestados';
-                body = { 
-                    DataInicio: form.querySelector('#atestados-inicio').value, 
-                    DataRetorno: form.querySelector('#atestados-retorno').value 
-                };
-                const consultorIdAtestados = parseInt(form.querySelector('#atestados-consultor').value);
-
-                if (id) {
-                    body.Consultores_id = consultorIdAtestados;
-                } else {
-                    body.Consultores = { "Id": consultorIdAtestados };
-                }
+            }
+            case 'ferias-form': case 'atestados-form': case 'epis-form': case 'ativos-form': {
+                const type = form.id.split('-')[0]; // 'ferias', 'atestados', 'epis', 'ativos'
+                const tableMap = { ferias: 'Ferias', atestados: 'Atestados', epis: 'Epis_Entregues', ativos: 'Ativos_Entregues' };
+                const fetchMap = { ferias: fetchFerias, atestados: fetchAtestados, epis: fetchEpis, ativos: fetchAtivos };
+                const renderMap = { ferias: applyAndRenderFerias, atestados: applyAndRenderAtestados, epis: applyAndRenderEpis, ativos: applyAndRenderAtivos };
                 
-                const atestadoAnexoInput = form.querySelector('#atestados-anexo');
-                if (atestadoAnexoInput && atestadoAnexoInput.files[0]) {
-                    showLoadingOverlay('Enviando anexo...');
-                    const anexoData = await uploadFile('Atestados', 'Anexo', atestadoAnexoInput.files[0]);
-                    if (anexoData) { body.Anexo = [anexoData]; } 
-                    else { hideLoadingOverlay(); return; }
-                }
-                callback = async () => { await fetchAtestados(); applyAndRenderAtestados(); };
-                break;
-            case 'epis-form':
-                id = form.dataset.id;
-                endpoint = id ? `Epis_Entregues/${id}` : 'Epis_Entregues';
-                 body = { 
-                    Item: form.querySelector('#epis-item').value, 
-                    Quantidade: parseInt(form.querySelector('#epis-qtd').value), 
-                    DataEntrega: form.querySelector('#epis-data').value, 
-                    Observacao: form.querySelector('#epis-obs').value 
-                };
-                const consultorIdEpis = parseInt(form.querySelector('#epis-consultor').value);
+                endpoint = id ? `${tableMap[type]}/${id}` : tableMap[type];
 
-                if (id) {
-                    body.Consultores_id = consultorIdEpis;
-                } else {
-                    body.Consultores = { "Id": consultorIdEpis };
+                if (type === 'ferias' || type === 'atestados') {
+                    body = { DataInicio: form.querySelector(`#${type}-inicio`).value, DataRetorno: form.querySelector(`#${type}-retorno`).value };
+                    const consultorIdSub = parseInt(form.querySelector(`#${type}-consultor`).value);
+                    if(id) { body.Consultores_id = consultorIdSub; } else { body.Consultores = { "Id": consultorIdSub }; }
+                } else if (type === 'epis') {
+                    body = { Item: form.querySelector('#epis-item').value, Quantidade: parseInt(form.querySelector('#epis-qtd').value), DataEntrega: form.querySelector('#epis-data').value, Observacao: form.querySelector('#epis-obs').value };
+                    const consultorIdSub = parseInt(form.querySelector('#epis-consultor').value);
+                    if(id) { body.Consultores_id = consultorIdSub; } else { body.Consultores = { "Id": consultorIdSub }; }
+                } else if (type === 'ativos') {
+                    body = { Item: form.querySelector('#ativos-item').value, DataEntrega: form.querySelector('#ativos-entrega').value, DataDevolucao: form.querySelector('#ativos-devolucao').value || null, Observacao: form.querySelector('#ativos-obs').value };
+                    const consultorIdSub = parseInt(form.querySelector('#ativos-consultor').value);
+                    if(id) { body.Consultores_id = consultorIdSub; } else { body.Consultores = { "Id": consultorIdSub }; }
                 }
-                
-                callback = async () => { await fetchEpis(); applyAndRenderEpis(); };
-                break;
-            case 'ativos-form':
-                id = form.dataset.id;
-                endpoint = id ? `Ativos_Entregues/${id}` : 'Ativos_Entregues';
-                 body = { 
-                    Item: form.querySelector('#ativos-item').value, 
-                    DataEntrega: form.querySelector('#ativos-entrega').value, 
-                    DataDevolucao: form.querySelector('#ativos-devolucao').value || null, 
-                    Observacao: form.querySelector('#ativos-obs').value 
-                };
-                const consultorIdAtivos = parseInt(form.querySelector('#ativos-consultor').value);
 
-                if (id) {
-                    body.Consultores_id = consultorIdAtivos;
-                } else {
-                    body.Consultores = { "Id": consultorIdAtivos };
+                if (type === 'atestados') {
+                    const anexoInput = form.querySelector('#atestados-anexo');
+                    if (anexoInput && anexoInput.files[0]) {
+                        const anexoData = await uploadFile('Atestados', 'Anexo', anexoInput.files[0]);
+                        if (anexoData) body.Anexo = [anexoData];
+                    }
                 }
-                
-                callback = async () => { await fetchAtivos(); applyAndRenderAtivos(); };
+
+                callback = async () => { await fetchMap[type](); renderMap[type](); hideSubFormToggle(`${type}-history-container`, `${type}-form-container`); };
                 break;
-case 'doc-form':
-                id = form.querySelector('#doc-id').value; 
+            }
+            case 'doc-form': {
                 const clientIdForDoc = form.querySelector('#doc-cliente-id').value;
-                const docNomeInput = form.querySelector('#doc-nome');
-                const docDataInput = form.querySelector('#doc-data');  
-                const docAnexoInput = form.querySelector('#doc-anexo');  
-                
-                if (!docNomeInput.value.trim()) {
-                    alert('O campo "Nome do Documento" é obrigatório.');
-                    docNomeInput.focus();
-                    return;
-                }
-                
-                if (!docDataInput.value) {
-                    alert('O campo "Data do Documento" é obrigatório.');
-                    docDataInput.focus();
-                    return;
-                }
-
-                if (!id && !docAnexoInput.files[0]) {
-                    alert('O campo "Anexar Arquivo" é obrigatório ao criar um novo documento.');
-                    docAnexoInput.focus();
-                    return;
-                }
+                if (!form.querySelector('#doc-nome').value.trim()) throw new Error('O campo "Nome do Documento" é obrigatório.');
+                if (!form.querySelector('#doc-data').value) throw new Error('O campo "Data do Documento" é obrigatório.');
+                if (!id && !form.querySelector('#doc-anexo').files[0]) throw new Error('O campo "Anexar Arquivo" é obrigatório ao criar um novo documento.');
 
                 endpoint = id ? `Clientes_Docs/${id}` : 'Clientes_Docs';
+                body = { Documento: form.querySelector('#doc-nome').value, Data: form.querySelector('#doc-data').value };
+                if (id) { body.Clientes_id = parseInt(clientIdForDoc); } else { body.Clientes = { "Id": parseInt(clientIdForDoc) }; }
                 
-                body = { 
-                    Documento: docNomeInput.value,
-                    Data: docDataInput.value 
-                };             
-                
-                if (id) { 
-                    body.Clientes_id = parseInt(clientIdForDoc);
-                } else { 
-                    body.Clientes = { "Id": parseInt(clientIdForDoc) };
+                const anexoInput = form.querySelector('#doc-anexo');
+                if (anexoInput && anexoInput.files[0]) {
+                    const anexoData = await uploadFile('Clientes_Docs', 'Anexo', anexoInput.files[0]);
+                    if (anexoData) body.Anexo = [anexoData];
                 }
-
-                if (docAnexoInput && docAnexoInput.files[0]) {
-                   if (docAnexoInput && docAnexoInput.files[0]) {
-                    showLoadingOverlay('Enviando anexo...');
-                    const anexoData = await uploadFile('Clientes_Docs', 'Anexo', docAnexoInput.files[0]);
-                    if (anexoData) { 
-                        body.Anexo = [anexoData]; 
-                    } else { 
-                        hideLoadingOverlay(); 
-                        return;
-                    }
-                } 
-                }
-
-                callback = async () => { 
-                    await fetchClienteDocs(); 
+                callback = async () => {
+                    await fetchClienteDocs();
                     openClienteDocsModal(clientIdForDoc);
                     hideModal(document.getElementById('doc-form-modal'));
                 };
                 break;
-            default: return;
+            }
+            default:
+                throw new Error("Formulário não reconhecido.");
         }
-
-        const method = id ? 'PATCH' : 'POST';
-        showLoadingOverlay('Salvando...');
+        
+        // --- EXECUÇÃO GENÉRICA (PARA TODOS OS CASES QUE NÃO TÊM 'return') ---
         const result = await nocoFetch(endpoint, { method, body: JSON.stringify(body) });
         
-        hideLoadingOverlay();
-
         if (result) {
             if (callback) await callback();
             
-            if(rhSubFormIds.includes(form.id)) {
-                const historyContainerId = form.id.replace('-form', '-history-container');
-                const formContainerId = form.id.replace('-form', '-form-container');
-                hideSubFormToggle(historyContainerId, formContainerId);
-            } else if (form.id === 'rh-form' || form.id === 'cliente-form'){
-                const cardsContainerId = form.id.replace('-form', '-cards-container');
-                const formContainerId = form.id.replace('-form', '-form-container');
-                hideFormToggle(cardsContainerId, formContainerId);
-            }
-
             form.reset();
             delete form.dataset.id;
+             if (form.querySelector('input[type="hidden"]')) {
+                form.querySelector('input[type="hidden"]').value = '';
+            }
             updateAllCounters();
             updateAllDashboards();
         }
+
+    } catch (error) {
+        alert(`Erro ao salvar: ${error.message}`);
+    } finally {
+        hideLoadingOverlay();
     }
+}
     async function handleDelete() {
         if (!activeDeleteItem || !activeDeleteItem.type) return;
         const { id, type } = activeDeleteItem;
@@ -3714,8 +3682,7 @@ async function handleEditItemObservation(itemJoinId, currentObs) {
     function populateSelectWithOptions(sel, data, valF, textF, addAll=true) { const selects=document.querySelectorAll(sel); let opts=addAll?'<option value="">Todos</option>':'<option value="">Selecione...</option>'; data.forEach(i=>{opts+=`<option value="${i[valF]}">${i[textF]}</option>`;}); selects.forEach(s=>{const curVal=s.value; s.innerHTML=opts; s.value=curVal;});}
     function populateConsultantSelects() { populateSelectWithOptions('.consultor-select', consultoresData, 'Id', 'Nome', false); }
     function populateClientSelects() { populateSelectWithOptions('.cliente-select', clientesData, 'Id', 'Nome', false); }
-    
-function handleGlobalClick(e) { 
+    function handleGlobalClick(e) { 
     const t = e.target; 
     const consultorEditBtn = t.closest('.consultor-edit-btn');
     if (consultorEditBtn) {
@@ -3723,7 +3690,7 @@ function handleGlobalClick(e) {
         e.stopPropagation();
         const card = consultorEditBtn.closest('.rh-card');
         activeCard = card;
-        handleCardEdit(); // A função de edição já sabe lidar com cards de consultor
+        handleCardEdit();
         return;
     }
 
@@ -3736,40 +3703,33 @@ function handleGlobalClick(e) {
         showModal(allElements.deleteConfirmModal);
         return;
     }
-    // --- INÍCIO DA CORREÇÃO ---
-    // Adiciona a lógica para os botões dentro dos modais de documento
-
-    // Botão para fechar o modal principal de documentos
+    
     if (t.closest('#close-cliente-docs-modal')) {
         hideModal(document.getElementById('cliente-docs-modal'));
         return;
     }
 
-    // Botão "Adicionar Documento" que abre o segundo modal (formulário)
     if (t.closest('#show-doc-form-btn')) {
         const clientId = t.closest('#show-doc-form-btn').dataset.clientId;
-        openDocFormModal(clientId, null); // Abre o formulário em modo de criação
+        openDocFormModal(clientId, null);
         return;
     }
 
-    // Botão para cancelar e fechar o modal de formulário
     if (t.closest('#cancel-doc-form')) {
         hideModal(document.getElementById('doc-form-modal'));
         return;
     }
     
-    // Botão para editar um documento existente na lista
     const docEditBtn = t.closest('.doc-edit-btn');
     if (docEditBtn) {
         const docId = docEditBtn.dataset.docId;
         const doc = clienteDocsData.find(d => d.Id == docId);
         if (doc) {
-            openDocFormModal(doc.Clientes_id, doc); // Abre o formulário em modo de edição
+            openDocFormModal(doc.Clientes_id, doc);
         }
         return;
     }
     
-    // Botão para apagar um documento da lista
     const docDeleteBtn = t.closest('.doc-delete-btn');
     if (docDeleteBtn) {
         const docId = docDeleteBtn.dataset.docId;
@@ -3778,8 +3738,6 @@ function handleGlobalClick(e) {
         showModal(allElements.deleteConfirmModal);
         return;
     }
-    // --- FIM DA CORREÇÃO ---
-
 
     const docsBtn = t.closest('.client-docs-btn');
     if (docsBtn) {
@@ -3808,16 +3766,16 @@ function handleGlobalClick(e) {
         showModal(allElements.deleteConfirmModal);
         return;
     }
-         const modalFilterBtn = t.closest('.item-modal-category-filter-btn');
+
+    const modalFilterBtn = t.closest('.item-modal-category-filter-btn');
     if (modalFilterBtn) {
         const category = modalFilterBtn.dataset.category;
-        // Atualiza a classe 'ativa'
         document.querySelectorAll('.item-modal-category-filter-btn').forEach(b => b.classList.remove('filter-btn-active'));
         modalFilterBtn.classList.add('filter-btn-active');
-        // Re-renderiza a grade de itens com a categoria selecionada
         renderModalCatalogoGrid(category);
-        return; // Impede que o resto da função execute
+        return;
     }
+
     if (t.closest('#incluir-item-btn')) {
         const selectedItemCard = document.querySelector('.item-catalogo-card.border-brand-gold');
         if (!selectedItemCard) {
@@ -3827,123 +3785,214 @@ function handleGlobalClick(e) {
         const itemId = selectedItemCard.dataset.itemId;
         const item = allItems.find(i => i.Id == itemId);
         const quantidade = parseInt(document.getElementById('requisicao-item-qtd').value);
-        
-        // --- CÓDIGO ATUALIZADO ---
         const observacao = document.getElementById('requisicao-item-obs').value;
 
         if (item && quantidade > 0) {
-            // Adiciona a observação ao objeto
             itemsParaAdicionar.push({ itemId: item.Id, itemName: item.Nome, quantidade: quantidade, observacao: observacao });
             renderItemsParaAdicionarList();
-            
-            // Limpa a seleção e os campos para o próximo item
             selectedItemCard.classList.remove('border-brand-gold', 'border-2');
             document.getElementById('requisicao-item-qtd').value = 1;
-            document.getElementById('requisicao-item-obs').value = ''; // Limpa o campo de observação
+            document.getElementById('requisicao-item-obs').value = '';
         }
         return;
     }
 
+    if (t.closest('.remover-item-temp-btn')) {
+        const indexToRemove = parseInt(t.closest('.remover-item-temp-btn').dataset.index);
+        itemsParaAdicionar.splice(indexToRemove, 1);
+        renderItemsParaAdicionarList();
+        return;
+    }
 
-        if (t.closest('.remover-item-temp-btn')) {
-            const indexToRemove = parseInt(t.closest('.remover-item-temp-btn').dataset.index);
-            itemsParaAdicionar.splice(indexToRemove, 1);
-            renderItemsParaAdicionarList();
-            return;
+    if (t.closest('#salvar-conteudo-requisicao-btn')) {
+        handleSaveRequisitionItems();
+        return;
+    }
+
+    const clienteStatusBtn = t.closest('.cliente-status-filter-btn');
+    if (clienteStatusBtn) {
+        document.querySelectorAll('.cliente-status-filter-btn').forEach(b => b.classList.remove('filter-btn-active'));
+        clienteStatusBtn.classList.add('filter-btn-active');
+        applyClienteFilters();
+        return;
+    }
+
+    if (t.closest('.add-content-btn')) {
+        const reqId = t.closest('.add-content-btn').dataset.id;
+        openRequisicaoItemModal(reqId);
+        return;
+    }
+
+    const itemImage = t.closest('.item-card img, .req-form-img');
+    const isActionButton = t.closest('.item-action-btn');
+
+    if (itemImage && !isActionButton) {
+        e.preventDefault();
+        showImageModal(itemImage.src);
+        return;
+    }
+
+    const kanbanButton = t.closest('.kanban-card .visit-actions button');
+    if(kanbanButton) {
+        const visitId = parseInt(kanbanButton.closest('.kanban-card').dataset.id);
+        if(kanbanButton.classList.contains('iniciar-visita-btn')) { handleStartVisit(visitId); return; }
+        if(kanbanButton.classList.contains('encerrar-visita-btn')) { handleEndVisit(visitId); return; }
+        if(kanbanButton.classList.contains('remarcar-visita-btn')) { handleRescheduleVisit(visitId); return; }
+    }
+
+    const itemActionButton = t.closest('.item-action-btn');
+    if (itemActionButton) {
+        const card = itemActionButton.closest('.item-card');
+        const itemId = parseInt(card.dataset.id);
+        const itemCategory = card.dataset.category;
+        const item = allItems.find(i => i.Id === itemId);
+
+        if (itemActionButton.classList.contains('edit-item-btn')) {
+            openItemModal(itemCategory, item);
+        } else if (itemActionButton.classList.contains('delete-item-btn')) {
+            activeDeleteItem = { id: itemId, type: 'item_catalogo', element: card };
+            showModal(allElements.deleteConfirmModal);
         }
+        return;
+    }
 
-        if (t.closest('#salvar-conteudo-requisicao-btn')) {
-            handleSaveRequisitionItems();
-            return;
-        }
-        const clienteStatusBtn = t.closest('.cliente-status-filter-btn');
-        if (clienteStatusBtn) {
-            document.querySelectorAll('.cliente-status-filter-btn').forEach(b => b.classList.remove('filter-btn-active'));
-            clienteStatusBtn.classList.add('filter-btn-active');
-            applyClienteFilters();
-            return;
-        }
+    const nL=t.closest('.nav-link'); if(nL){e.preventDefault(); handleNavClick({currentTarget:nL}); return;} 
+    const rhC=t.closest('.rh-card'); if(rhC&&!t.closest('a')){openDetailsModal(rhC); return;} 
+    const clC=t.closest('.cliente-card'); if(clC&&!t.closest('a')){openDetailsModal(clC); return;} 
+    const btn=t.closest('button'); if(!btn)return; 
+    
+    if(btn.classList.contains('toggle-recorrente-btn')) { 
+        handleToggleRecorrente(btn);
+        return;
+    }
+    if(btn.classList.contains('toggle-receita-recorrente-btn')) {
+        handleToggleReceitaRecorrente(btn);
+        return;
+    }
 
-        if (t.closest('.add-content-btn')) {
-            const reqId = t.closest('.add-content-btn').dataset.id;
-            openRequisicaoItemModal(reqId);
-            return;
-        }
+    if(btn.classList.contains('view-toggle-btn')){handleViewToggle({currentTarget:btn});return;} 
+    if(btn.classList.contains('dashboard-nav-btn')){handleDashboardNav(btn);return;}
+    if(btn.classList.contains('cancel-sub-form')){ hideSubFormToggle(btn.dataset.history, btn.dataset.form); return; }
+    if(btn.classList.contains('item-category-filter-btn')){ handleCategoryFilterClick(btn); return; }
+    if (btn.classList.contains('add-item-btn')) { openItemModal(btn.dataset.category); return; }
+    if(btn.classList.contains('change-status-btn')) { handleChangeRequisitionStatus(btn); return; }
 
-        const itemImage = t.closest('.item-card img, .req-form-img');
-        const isActionButton = t.closest('.item-action-btn');
-
-        if (itemImage && !isActionButton) {
-            e.preventDefault();
-            showImageModal(itemImage.src);
-            return;
-        }
-
-        const kanbanButton = t.closest('.kanban-card .visit-actions button');
-        if(kanbanButton) {
-            const visitId = parseInt(kanbanButton.closest('.kanban-card').dataset.id);
-            if(kanbanButton.classList.contains('iniciar-visita-btn')) { handleStartVisit(visitId); return; }
-            if(kanbanButton.classList.contains('encerrar-visita-btn')) { handleEndVisit(visitId); return; }
-            if(kanbanButton.classList.contains('remarcar-visita-btn')) { handleRescheduleVisit(visitId); return; }
-        }
-
-        const itemActionButton = t.closest('.item-action-btn');
-        if (itemActionButton) {
-            const card = itemActionButton.closest('.item-card');
-            const itemId = parseInt(card.dataset.id);
-            const itemCategory = card.dataset.category;
-            const item = allItems.find(i => i.Id === itemId);
-
-            if (itemActionButton.classList.contains('edit-item-btn')) {
-                openItemModal(itemCategory, item);
-            } else if (itemActionButton.classList.contains('delete-item-btn')) {
-                activeDeleteItem = { id: itemId, type: 'item_catalogo', element: card };
-                showModal(allElements.deleteConfirmModal);
-            }
-            return;
-        }
-
-        const nL=t.closest('.nav-link'); if(nL){e.preventDefault(); handleNavClick({currentTarget:nL}); return;} 
-        const rhC=t.closest('.rh-card'); if(rhC&&!t.closest('a')){openDetailsModal(rhC); return;} 
-        const clC=t.closest('.cliente-card'); if(clC&&!t.closest('a')){openDetailsModal(clC); return;} 
-        const btn=t.closest('button'); if(!btn)return; 
-        if(btn.classList.contains('view-toggle-btn')){handleViewToggle({currentTarget:btn});return;} 
-        if(btn.classList.contains('dashboard-nav-btn')){handleDashboardNav(btn);return;}
-        if(btn.classList.contains('cancel-sub-form')){ hideSubFormToggle(btn.dataset.history, btn.dataset.form); return; }
-        if(btn.classList.contains('item-category-filter-btn')){ handleCategoryFilterClick(btn); return; }
-        if (btn.classList.contains('add-item-btn')) { openItemModal(btn.dataset.category); return; }
-        if(btn.classList.contains('change-status-btn')) { handleChangeRequisitionStatus(btn); return; }
-        const aM={
-            'logout-button':()=>showModal(allElements.logoutConfirmModal),'cancel-logout-btn':()=>hideModal(allElements.logoutConfirmModal),'confirm-logout-btn':()=>{sessionStorage.clear(); location.reload();},
-            'sidebar-toggle':toggleMobileSidebar,'show-insights-btn':()=>{generateInsights(); showModal(allElements.insightsModal);},'close-insights-modal':()=>hideModal(allElements.insightsModal),
-            'show-report-modal-btn': openReportModal,'close-report-modal':()=>hideModal(allElements.reportModal),
-            'show-rh-form':()=>setupFormToggle('rh-cards-container','rh-form-container'),'cancel-rh-form':()=>hideFormToggle('rh-cards-container','rh-form-container'),
-            'show-cliente-form':()=>setupFormToggle('cliente-cards-container','cliente-form-container'),'cancel-cliente-form':()=>hideFormToggle('cliente-cards-container','cliente-form-container'),
-            'show-visita-form':()=>openVisitaModal(),
-            'generate-agenda-btn': generateAgendaPdf,
-            'cancel-visita-form':()=>hideModal(allElements.visitaFormModal),
-            'show-requisicao-form': handleCreateNewRequisition,
-            'cancel-requisicao-item-form': () => hideModal(allElements.requisicaoItemFormModal),
-            'show-new-item-btn': () => openItemModal(),
-            'show-receita-form':()=>setupSubFormToggle('receitas-history-container','receita-form-container'),'cancel-receita-form':()=>hideSubFormToggle('receitas-history-container','receita-form-container'),
-            'show-custo-form':()=>setupSubFormToggle('custos-history-container','custo-form-container'),'cancel-custo-form':()=>hideSubFormToggle('custos-history-container','custo-form-container'),
-            'show-ferias-form': () => setupSubFormToggle('ferias-history-container', 'ferias-form-container'),
-            'show-atestados-form': () => setupSubFormToggle('atestados-history-container', 'atestados-form-container'),
-            'show-epis-form': () => setupSubFormToggle('epis-history-container', 'epis-form-container'),
-            'show-ativos-form': () => setupSubFormToggle('ativos-history-container', 'ativos-form-container'),
-            'cancel-item-form':()=>hideModal(allElements.itemFormModal),'apply-filters-btn':applyFilters,'clear-filters-btn':clearFilters,
-            'apply-req-filters-btn':applyRequisicaoFilters,'clear-req-filters-btn':clearRequisicaoFilters,
-            'delete-btn':()=>{hideModal(allElements.detailsModal); showModal(allElements.deleteConfirmModal);},
-            'cancel-delete-btn':()=>{hideModal(allElements.deleteConfirmModal); if(activeCard||activeTableRow)showModal(allElements.detailsModal); activeDeleteItem={id:null,type:null,element:null};},
-            'edit-btn':handleCardEdit,'close-modal':()=>hideModal(allElements.detailsModal),
-        }; 
-        if(aM[btn.id]){aM[btn.id](); return;} 
-        
-        if (btn.classList.contains('table-details-btn')) openDetailsModalForRow(btn);
-        else if(btn.classList.contains('table-edit-btn'))handleTableEdit(btn); 
-        else if(btn.classList.contains('table-delete-btn'))handleTableDelete(btn); 
-        else if(btn.classList.contains('rh-tab-btn')||btn.classList.contains('requisicao-tab-btn')||btn.classList.contains('financeiro-tab-btn')||btn.classList.contains('validades-tab-btn'))handleTabClick(btn);
+    const aM={
+        'logout-button':()=>showModal(allElements.logoutConfirmModal),'cancel-logout-btn':()=>hideModal(allElements.logoutConfirmModal),'confirm-logout-btn':()=>{sessionStorage.clear(); location.reload();},
+        'sidebar-toggle':toggleMobileSidebar,'show-insights-btn':()=>{generateInsights(); showModal(allElements.insightsModal);},'close-insights-modal':()=>hideModal(allElements.insightsModal),
+        'show-report-modal-btn': openReportModal,'close-report-modal':()=>hideModal(allElements.reportModal),
+        'show-rh-form':()=>setupFormToggle('rh-cards-container','rh-form-container'),'cancel-rh-form':()=>hideFormToggle('rh-cards-container','rh-form-container'),
+        'show-cliente-form':()=>setupFormToggle('cliente-cards-container','cliente-form-container'),'cancel-cliente-form':()=>hideFormToggle('cliente-cards-container','cliente-form-container'),
+        'show-visita-form':()=>openVisitaModal(),
+        'generate-agenda-btn': generateAgendaPdf,
+        'cancel-visita-form':()=>hideModal(allElements.visitaFormModal),
+        'show-requisicao-form': handleCreateNewRequisition,
+        'cancel-requisicao-item-form': () => hideModal(allElements.requisicaoItemFormModal),
+        'show-new-item-btn': () => openItemModal(),
+        'show-receita-form':()=>setupSubFormToggle('receitas-history-container','receita-form-container'),'cancel-receita-form':()=>hideSubFormToggle('receitas-history-container','receita-form-container'),
+        'show-custo-form':()=>setupSubFormToggle('custos-history-container','custo-form-container'),'cancel-custo-form':()=>hideSubFormToggle('custos-history-container','custo-form-container'),
+        'show-ferias-form': () => setupSubFormToggle('ferias-history-container', 'ferias-form-container'),
+        'show-atestados-form': () => setupSubFormToggle('atestados-history-container', 'atestados-form-container'),
+        'show-epis-form': () => setupSubFormToggle('epis-history-container', 'epis-form-container'),
+        'show-ativos-form': () => setupSubFormToggle('ativos-history-container', 'ativos-form-container'),
+        'cancel-item-form':()=>hideModal(allElements.itemFormModal),'apply-filters-btn':applyFilters,'clear-filters-btn':clearFilters,
+        'apply-req-filters-btn':applyRequisicaoFilters,'clear-req-filters-btn':clearRequisicaoFilters,
+        'delete-btn':()=>{hideModal(allElements.detailsModal); showModal(allElements.deleteConfirmModal);},
+        'cancel-delete-btn':()=>{hideModal(allElements.deleteConfirmModal); if(activeCard||activeTableRow)showModal(allElements.detailsModal); activeDeleteItem={id:null,type:null,element:null};},
+        'edit-btn':handleCardEdit,'close-modal':()=>hideModal(allElements.detailsModal),
+    }; 
+    if(aM[btn.id]){aM[btn.id]();} 
+    
+    if (btn.classList.contains('table-details-btn')) { openDetailsModalForRow(btn); return; }
+    if(btn.classList.contains('table-edit-btn')) { handleTableEdit(btn); return; } 
+    if(btn.classList.contains('table-delete-btn')) { handleTableDelete(btn); return; } 
+    if(btn.classList.contains('rh-tab-btn')||btn.classList.contains('requisicao-tab-btn')||btn.classList.contains('financeiro-tab-btn')||btn.classList.contains('validades-tab-btn')) { handleTabClick(btn); return; }
 }
+    /**
+ * Verifica todos os custos recorrentes e gera as próximas faturas se necessário.
+ * Esta função "alcança" os meses que podem ter sido perdidos e respeita a desativação da recorrência.
+ * Retorna true se algum custo novo foi gerado, senão false.
+ */
+async function verificarEGerarCustosRecorrentes() {
+    console.log("Verificando custos recorrentes...");
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0); // Zera a hora para comparações de dias
+
+    // 1. Agrupa TODOS os custos (recorrentes ou não) por uma chave única.
+    // Isso é crucial para encontrar a "ponta da corrente" de cada série.
+    const gruposDeCustos = custosData.reduce((acc, custo) => {
+        const chave = `${custo.Credor}-${custo.Valor}-${custo.Observacao || ''}`;
+        if (!acc[chave]) {
+            acc[chave] = [];
+        }
+        acc[chave].push(custo);
+        return acc;
+    }, {});
+
+    const promessasDeCriacao = [];
+    let algumCustoCriado = false;
+
+    // 2. Itera sobre cada grupo de custos
+    for (const chave in gruposDeCustos) {
+        const grupo = gruposDeCustos[chave];
+        
+        // Encontra o custo mais recente dentro do grupo (a "ponta da corrente")
+        let ultimoCustoNaSerie = grupo.sort((a, b) => new Date(b.Vencimento) - new Date(a.Vencimento))[0];
+        
+        // 3. VERIFICAÇÃO PRINCIPAL: Só continua se o ÚLTIMO custo da série estiver marcado como recorrente.
+        if (ultimoCustoNaSerie && ultimoCustoNaSerie.Recorrente) {
+            
+            // 4. Loop "Catch-up": Gera custos faltantes até que o último gerado seja futuro.
+            // A lógica aqui dentro permanece a mesma de antes.
+            while (new Date(ultimoCustoNaSerie.Vencimento + 'T00:00:00') < hoje) {
+                algumCustoCriado = true;
+                
+                const vencimentoAnterior = new Date(ultimoCustoNaSerie.Vencimento + 'T00:00:00');
+                const proximoVencimento = new Date(vencimentoAnterior.setMonth(vencimentoAnterior.getMonth() + 1));
+                const proximoVencimentoString = proximoVencimento.toISOString().slice(0, 10);
+
+                const novoCustoBody = {
+                    Credor: ultimoCustoNaSerie.Credor,
+                    Vencimento: proximoVencimentoString,
+                    Valor: ultimoCustoNaSerie.Valor,
+                    Status: "Pendente",
+                    Observacao: ultimoCustoNaSerie.Observacao,
+                    Recorrente: true
+                };
+
+                console.log(`Gerando custo faltante para ${novoCustoBody.Credor} em ${novoCustoBody.Vencimento}`);
+                
+                promessasDeCriacao.push(
+                    nocoFetch('Custos', {
+                        method: 'POST',
+                        body: JSON.stringify(novoCustoBody)
+                    })
+                );
+                
+                // Atualiza 'ultimoCustoNaSerie' para a próxima iteração do loop
+                ultimoCustoNaSerie = novoCustoBody;
+            }
+        }
+    }
+
+    // 5. Executa todas as criações de uma vez, se houver alguma.
+    if (promessasDeCriacao.length > 0) {
+        showLoadingOverlay(`Gerando ${promessasDeCriacao.length} custo(s) recorrente(s)...`);
+        await Promise.all(promessasDeCriacao);
+        hideLoadingOverlay();
+    }
+    
+    return algumCustoCriado;
+}
+
+ /**
+ * Gera APENAS o próximo custo recorrente, se ele ainda não existir.
+ * Usado para feedback imediato ao criar ou ativar a recorrência.
+ */
+/**
+ * Gera o custo recorrente para o próximo mês, se ele ainda não existir.
+ * @param {object} custoOriginal - O objeto do custo que foi marcado como recorrente.
+ */
 async function handleSaveRequisitionItems() {
     const requisicaoId = document.getElementById('requisicao-item-form-modal').dataset.requisicaoId;
     if (!requisicaoId || itemsParaAdicionar.length === 0) {
@@ -3982,6 +4031,153 @@ async function handleSaveRequisitionItems() {
         alert('Ocorreu um erro ao salvar um ou mais itens. Por favor, tente novamente.');
         console.error('Erro ao salvar itens da requisição:', error);
     }
+}
+/**
+ * Gera APENAS o próximo custo recorrente, se ele ainda não existir.
+ * Usado para feedback imediato ao criar ou ativar a recorrência.
+ */
+/**
+ * Gera APENAS a próxima receita recorrente, se ela ainda não existir.
+ */
+async function gerarProximaReceitaRecorrente(receitaOriginal) {
+    if (!receitaOriginal.Recorrente || !receitaOriginal.Clientes?.Id) return;
+
+    const vencimentoOriginal = new Date(receitaOriginal.Vencimento + 'T00:00:00');
+    const proximoVencimento = new Date(vencimentoOriginal);
+    proximoVencimento.setMonth(proximoVencimento.getMonth() + 1);
+    const proximoVencimentoString = proximoVencimento.toISOString().slice(0, 10);
+
+    const receitaExistente = receitasData.find(r => 
+        r.Clientes?.Id == receitaOriginal.Clientes.Id &&
+        r.Valor == receitaOriginal.Valor &&
+        r.Vencimento === proximoVencimentoString
+    );
+
+    if (receitaExistente) {
+        console.log('Receita recorrente para o próximo mês já existe.');
+        return;
+    }
+
+    const novaReceitaBody = {
+        Clientes_id: receitaOriginal.Clientes.Id, // Chave estrangeira
+        Vencimento: proximoVencimentoString,
+        Valor: receitaOriginal.Valor,
+        Status: "Pendente",
+        Observacao: receitaOriginal.Observacao,
+        Recorrente: true
+    };
+    
+    await nocoFetch('Receitas', {
+        method: 'POST',
+        body: JSON.stringify(novaReceitaBody)
+    });
+}
+
+
+/**
+ * Verifica todas as receitas recorrentes e gera as próximas faturas se necessário.
+ */
+async function verificarEGerarReceitasRecorrentes() {
+    console.log("Verificando receitas recorrentes...");
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+
+    const gruposDeReceitas = receitasData.reduce((acc, receita) => {
+        // A chave de agrupamento usa o ID do cliente para garantir a precisão
+        const chave = `${receita.Clientes?.Id}-${receita.Valor}-${receita.Observacao || ''}`;
+        if (!acc[chave]) {
+            acc[chave] = [];
+        }
+        acc[chave].push(receita);
+        return acc;
+    }, {});
+
+    const promessasDeCriacao = [];
+    let algumaReceitaCriada = false;
+
+    for (const chave in gruposDeReceitas) {
+        const grupo = gruposDeReceitas[chave];
+        let ultimaReceitaNaSerie = grupo.sort((a, b) => new Date(b.Vencimento) - new Date(a.Vencimento))[0];
+        
+        // Só continua se a última receita da série for recorrente e tiver um cliente associado
+        if (ultimaReceitaNaSerie && ultimaReceitaNaSerie.Recorrente && ultimaReceitaNaSerie.Clientes?.Id) {
+            
+            while (new Date(ultimaReceitaNaSerie.Vencimento + 'T00:00:00') < hoje) {
+                algumaReceitaCriada = true;
+                
+                const vencimentoAnterior = new Date(ultimaReceitaNaSerie.Vencimento + 'T00:00:00');
+                const proximoVencimento = new Date(vencimentoAnterior.setMonth(vencimentoAnterior.getMonth() + 1));
+                const proximoVencimentoString = proximoVencimento.toISOString().slice(0, 10);
+
+                const novaReceitaBody = {
+                    Clientes_id: ultimaReceitaNaSerie.Clientes.Id,
+                    Vencimento: proximoVencimentoString,
+                    Valor: ultimaReceitaNaSerie.Valor,
+                    Status: "Pendente",
+                    Observacao: ultimaReceitaNaSerie.Observacao,
+                    Recorrente: true
+                };
+
+                console.log(`Gerando receita faltante para ${ultimaReceitaNaSerie.Clientes.Nome} em ${novaReceitaBody.Vencimento}`);
+                
+                promessasDeCriacao.push(
+                    nocoFetch('Receitas', {
+                        method: 'POST',
+                        body: JSON.stringify(novaReceitaBody)
+                    })
+                );
+                
+                // Atualiza a 'ultimaReceitaNaSerie' para a próxima iteração do loop
+                ultimaReceitaNaSerie = { ...novaReceitaBody, Clientes: ultimaReceitaNaSerie.Clientes }; // Mantém o objeto do cliente
+            }
+        }
+    }
+
+    if (promessasDeCriacao.length > 0) {
+        showLoadingOverlay(`Gerando ${promessasDeCriacao.length} receita(s) recorrente(s)...`);
+        await Promise.all(promessasDeCriacao);
+        hideLoadingOverlay();
+    }
+    
+    return algumaReceitaCriada;
+}
+
+async function gerarProximoCustoRecorrente(custoOriginal) {
+    if (!custoOriginal.Recorrente) return;
+
+    // Calcula a data do próximo mês
+    const vencimentoOriginal = new Date(custoOriginal.Vencimento + 'T00:00:00');
+    const proximoVencimento = new Date(vencimentoOriginal);
+    proximoVencimento.setMonth(proximoVencimento.getMonth() + 1);
+    const proximoVencimentoString = proximoVencimento.toISOString().slice(0, 10);
+
+    // Verifica se um custo com as mesmas características já existe para o próximo mês
+    const custoExistente = custosData.find(c => 
+        c.Credor === custoOriginal.Credor &&
+        c.Valor == custoOriginal.Valor && // Usar '==' para comparar número com string se necessário
+        c.Vencimento === proximoVencimentoString
+    );
+
+    if (custoExistente) {
+        console.log('Custo recorrente para o próximo mês já existe. Nenhuma ação necessária.');
+        return; // Não faz nada se já existir
+    }
+
+    // Monta o corpo da requisição para o novo custo
+    const novoCustoBody = {
+        Credor: custoOriginal.Credor,
+        Vencimento: proximoVencimentoString,
+        Valor: custoOriginal.Valor,
+        Status: "Pendente",
+        Observacao: custoOriginal.Observacao,
+        Recorrente: true
+    };
+    
+    // Envia a requisição para criar o novo custo
+    await nocoFetch('Custos', {
+        method: 'POST',
+        body: JSON.stringify(novoCustoBody)
+    });
 }
     function navigateTo(targetId, isInitial = false) { allElements.pages.forEach(page => page.classList.add('hidden')); const targetPage = document.getElementById(targetId); if (targetPage) { targetPage.classList.remove('hidden'); if (targetId === 'visitas' && calendar) setTimeout(() => calendar.render(), 1); if (targetId === 'dashboard') setTimeout(() => updateAllDashboards(), 1); } const navLink = document.querySelector(`.nav-link[data-target="${targetId}"]`); if (navLink) { document.querySelectorAll('.nav-link').forEach(l => { l.classList.remove('bg-brand-gold', 'text-white'); l.classList.add('text-gray-400', 'hover:bg-brand-gold', 'hover:text-white'); }); navLink.classList.add('bg-brand-gold', 'text-white'); navLink.classList.remove('text-gray-400'); if (document.getElementById('page-title')) document.getElementById('page-title').textContent = navLink.title; } }
     function handleNavClick(e) {
@@ -4147,8 +4343,23 @@ function handleTableEdit(btn) {
     const type = btn.dataset.type;
     switch (type) {
         case 'visita': { const v = visitsData.find(d => d.Id === id); if (v) openVisitaModal(v); break; }
-        case 'receita': { const r = receitasData.find(d => d.Id === id); if (r) { setupSubFormToggle('receitas-history-container', 'receita-form-container'); const f = document.getElementById('receita-form'); f.dataset.id = r.Id; f.querySelector('#receita-cliente-form').value = r.Clientes?.Id; f.querySelector('#receita-vencimento').value = r.Vencimento; f.querySelector('#receita-valor').value = r.Valor; f.querySelector('#receita-status-form').value = r.Status; f.querySelector('#receita-obs').value = r.Observacao || ''; } break; }
-        case 'custo': { const c = custosData.find(d => d.Id === id); if (c) { setupSubFormToggle('custos-history-container', 'custo-form-container'); const f = document.getElementById('custo-form'); f.dataset.id = c.Id; f.querySelector('#custo-credor').value = c.Credor; f.querySelector('#custo-vencimento').value = c.Vencimento; f.querySelector('#custo-valor').value = c.Valor; f.querySelector('#custo-status-form').value = c.Status; f.querySelector('#custo-obs').value = c.Observacao || ''; } break; }
+        case 'receita': { const r = receitasData.find(d => d.Id === id); if (r) { setupSubFormToggle('receitas-history-container', 'receita-form-container'); const f = document.getElementById('receita-form'); f.dataset.id = r.Id; f.querySelector('#receita-cliente-form').value = r.Clientes?.Id; f.querySelector('#receita-vencimento').value = r.Vencimento; f.querySelector('#receita-valor').value = r.Valor; f.querySelector('#receita-status-form').value = r.Status; f.querySelector('#receita-obs').value = r.Observacao || ''; f.querySelector('#receita-recorrente-form').checked = r.Recorrente; } break; }
+       case 'custo': { 
+    const c = custosData.find(d => d.Id === id); 
+    if (c) { 
+        setupSubFormToggle('custos-history-container', 'custo-form-container'); 
+        const f = document.getElementById('custo-form'); 
+        f.dataset.id = c.Id; 
+        f.querySelector('#custo-credor').value = c.Credor; 
+        f.querySelector('#custo-vencimento').value = c.Vencimento; 
+        f.querySelector('#custo-valor').value = c.Valor; 
+        f.querySelector('#custo-status-form').value = c.Status; 
+        f.querySelector('#custo-obs').value = c.Observacao || ''; 
+        // --- CÓDIGO NOVO ---
+        f.querySelector('#custo-recorrente-form').checked = c.Recorrente;
+    } 
+    break; 
+}
         case 'validade': { 
     const v = validadesData.find(d => d.Id === id); 
     if (v) { 
@@ -5608,8 +5819,44 @@ function applyRequisicaoFilters(){
     function applyAndRenderAtestados(){ const nome = document.getElementById('atestados-filter-name').value.toLowerCase(); const inicio = document.getElementById('atestados-filter-start').value; const fim = document.getElementById('atestados-filter-end').value; const filtered = atestadosData.filter(a => (!nome || (a.Consultores?.Nome || '').toLowerCase().includes(nome)) && (!inicio || a.DataInicio >= inicio) && (!fim || a.DataRetorno <= fim) ); renderAtestados(filtered); }
     function applyAndRenderEpis(){ const nome = document.getElementById('epis-filter-name').value.toLowerCase(); const inicio = document.getElementById('epis-filter-start').value; const fim = document.getElementById('epis-filter-end').value; const filtered = episEntreguesData.filter(e => (!nome || (e.Consultores?.Nome || '').toLowerCase().includes(nome)) && (!inicio || e.DataEntrega >= inicio) && (!fim || e.DataEntrega <= fim) ); renderEpis(filtered); }
     function applyAndRenderAtivos(){ const nome = document.getElementById('ativos-filter-name').value.toLowerCase(); const inicio = document.getElementById('ativos-filter-start').value; const fim = document.getElementById('ativos-filter-end').value; const filtered = ativosData.filter(a => (!nome || (a.Consultores?.Nome || '').toLowerCase().includes(nome)) && (!inicio || a.DataEntrega >= inicio) && (!fim || a.DataEntrega <= fim) ); renderAtivos(filtered); }
-    function applyAndRenderReceitas(){const s=document.getElementById('filter-receita-start-date').value,e=document.getElementById('filter-receita-end-date').value,c=document.getElementById('filter-receita-cliente').value,st=document.getElementById('filter-receita-status').value; const f=receitasData.filter(r=>(!s||r.Vencimento>=s)&&(!e||r.Vencimento<=e)&&(!c||r.Clientes?.Id==c)&&(!st||r.Status===st)); renderReceitas(f);}
-    function applyAndRenderCustos(){const s=document.getElementById('filter-custo-start-date').value,e=document.getElementById('filter-custo-end-date').value,cr=document.getElementById('filter-custo-credor').value.toLowerCase(),st=document.getElementById('filter-custo-status').value; const f=custosData.filter(c=>(!s||c.Vencimento>=s)&&(!e||c.Vencimento<=e)&&(!cr||c.Credor.toLowerCase().includes(cr))&&(!st||c.Status===st)); renderCustos(f);}
+    function applyAndRenderReceitas() {
+    const s = document.getElementById('filter-receita-start-date').value;
+    const e = document.getElementById('filter-receita-end-date').value;
+    const c = document.getElementById('filter-receita-cliente').value;
+    const st = document.getElementById('filter-receita-status').value;
+    
+    const f = receitasData.filter(r => 
+        (!s || r.Vencimento >= s) && 
+        (!e || r.Vencimento <= e) && 
+        (!c || r.Clientes?.Id == c) && 
+        (!st || r.Status === st)
+    );
+
+    // --- LINHA ADICIONADA ---
+    // Ordena os resultados pela data de vencimento, do mais antigo para o mais novo.
+    f.sort((a, b) => new Date(a.Vencimento) - new Date(b.Vencimento));
+
+    renderReceitas(f);
+}
+    function applyAndRenderCustos() {
+    const s = document.getElementById('filter-custo-start-date').value;
+    const e = document.getElementById('filter-custo-end-date').value;
+    const cr = document.getElementById('filter-custo-credor').value.toLowerCase();
+    const st = document.getElementById('filter-custo-status').value;
+    
+    const f = custosData.filter(c => 
+        (!s || c.Vencimento >= s) && 
+        (!e || c.Vencimento <= e) && 
+        (!cr || c.Credor.toLowerCase().includes(cr)) && 
+        (!st || c.Status === st)
+    );
+
+    // --- LINHA ADICIONADA ---
+    // Ordena os resultados pela data de vencimento, do mais antigo para o mais novo.
+    f.sort((a, b) => new Date(a.Vencimento) - new Date(b.Vencimento));
+
+    renderCustos(f);
+}
     function applyAndRenderServicos() {
     const startDate = document.getElementById('filter-servico-start-date').value;
     const endDate = document.getElementById('filter-servico-end-date').value;
