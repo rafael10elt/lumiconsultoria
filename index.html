@@ -147,6 +147,7 @@ body {
                     <a href="#" class="nav-link flex items-center justify-center w-12 h-12 mb-4 rounded-lg text-gray-400 hover:bg-brand-gold hover:text-white" data-target="reembolsos" title="Reembolsos"><i class="fas fa-receipt"></i></a>
                     <a href="#" class="nav-link flex items-center justify-center w-12 h-12 mb-4 rounded-lg text-gray-400 hover:bg-brand-gold hover:text-white" data-target="validades" title="Validades"><i class="fas fa-shield-alt"></i></a>
                     <a href="#" class="nav-link flex items-center justify-center w-12 h-12 mb-4 rounded-lg text-gray-400 hover:bg-brand-gold hover:text-white" data-target="servicos" title="Serviços"><i class="fas fa-cogs"></i></a>
+                    <a href="#" class="nav-link flex items-center justify-center w-12 h-12 mb-4 rounded-lg text-gray-400 hover:bg-brand-gold hover:text-white" data-target="chamados" title="Chamados"><i class="fas fa-headset"></i></a>
                 </nav>
         </aside>
             <!-- Overlay for mobile sidebar -->
@@ -1370,7 +1371,122 @@ body {
     </div>
 </div>
 </div>
+<!-- INÍCIO DA NOVA PÁGINA DE CHAMADOS -->
+<div id="chamados" class="page hidden">
+    <div class="flex flex-col md:flex-row justify-between md:items-center mb-4">
+        <div>
+            <h2 class="text-3xl font-bold text-gray-800 dark:text-white">Chamados</h2>
+            <p class="text-gray-600 dark:text-gray-300">Gerenciamento de chamados e atendimento ao cliente.</p>
+        </div>
+        <div class="flex items-center space-x-2 mt-4 md:mt-0">
+            <div class="p-1 bg-gray-200 dark:bg-gray-700 rounded-lg">
+                <button class="chamado-view-toggle-btn bg-white dark:bg-gray-800 px-3 py-1 rounded-md shadow-sm" data-view="chamados-list-view"><i class="fas fa-list"></i></button>
+                <button class="chamado-view-toggle-btn px-3 py-1 rounded-md" data-view="chamados-kanban-view"><i class="fas fa-columns"></i></button>
+            </div>
+            <button id="show-chamado-form" class="bg-brand-gold text-white px-4 py-2 rounded-lg shadow hover:bg-brand-gold-dark transition-colors">Novo Chamado</button>
+        </div>
+    </div>
+    
+    <!-- Filtros -->
+    <div id="chamados-filters" class="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-3 mb-4 p-3 bg-white dark:bg-gray-800 rounded-lg shadow">
+        <div>
+            <label for="filter-chamado-codigo" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pesquisar por Cód. Chamado</label>
+            <input type="text" id="filter-chamado-codigo" placeholder="Buscar por código..." class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400">
+        </div>
+        <div>
+            <label for="filter-chamado-start-date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">De</label>
+            <input type="date" id="filter-chamado-start-date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        </div>
+        <div>
+            <label for="filter-chamado-end-date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Até</label>
+            <input type="date" id="filter-chamado-end-date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        </div>
+        <div>
+            <label for="filter-chamado-nome" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nome do Cliente</label>
+            <input type="text" id="filter-chamado-nome" placeholder="Buscar por nome..." class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400">
+        </div>
+        <div>
+            <label for="filter-chamado-status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+            <select id="filter-chamado-status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <option value="">Todos</option>
+                <option value="Em Espera">Em Espera</option>
+                <option value="Respondido">Respondido</option>
+            </select>
+        </div>
+    </div>
 
+    <!-- Visualização em Lista -->
+    <div id="chamados-list-view" class="chamados-view">
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg hidden md:block">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-300">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Cód. Chamado</th>
+                        <th scope="col" class="px-6 py-3">Cliente</th>
+                        <th scope="col" class="px-6 py-3">Data Abertura</th>
+                        <th scope="col" class="px-6 py-3">Status</th>
+                        <th scope="col" class="px-6 py-3">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="chamados-table-body"></tbody>
+            </table>
+        </div>
+        <div id="chamados-cards-container-list" class="grid grid-cols-1 gap-4 md:hidden"></div>
+    </div>
+
+    <!-- Visualização em Kanban -->
+    <div id="chamados-kanban-view" class="chamados-view hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="kanban-column bg-gray-200 dark:bg-gray-800 rounded-lg p-4" data-status="Em Espera">
+                <h3 class="font-bold text-lg mb-4 text-gray-800 dark:text-white">Em Espera</h3>
+                <div class="space-y-4" id="kanban-em-espera"></div>
+            </div>
+            <div class="kanban-column bg-gray-200 dark:bg-gray-800 rounded-lg p-4" data-status="Respondido">
+                <h3 class="font-bold text-lg mb-4 text-gray-800 dark:text-white">Respondido</h3>
+                <div class="space-y-4" id="kanban-respondido"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulário Modal -->
+    <div id="chamado-form-modal" class="fixed inset-0 z-40 items-center justify-center hidden bg-black bg-opacity-60 modal-bg-animate">
+        <div class="w-full max-w-lg p-6 mx-4 bg-white rounded-lg shadow-lg dark:bg-gray-800 modal-content-animate">
+            <h2 id="chamado-modal-title" class="text-xl font-bold text-gray-900 dark:text-white mb-4">Novo Chamado</h2>
+            <form id="chamado-form">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="chamado-nome" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nome do Cliente</label>
+                        <input type="text" id="chamado-nome" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600" required>
+                    </div>
+                    <div>
+                        <label for="chamado-contato" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Contato (Telefone)</label>
+                        <input type="tel" id="chamado-contato" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="chamado-mensagem" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Mensagem</label>
+                        <textarea id="chamado-mensagem" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-brand-gold focus:border-brand-gold dark:bg-gray-700 dark:border-gray-600" required></textarea>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="chamado-observacao" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Observação Interna</label>
+                        <textarea id="chamado-observacao" rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-brand-gold focus:border-brand-gold dark:bg-gray-700 dark:border-gray-600"></textarea>
+                    </div>
+                    <div id="chamado-status-wrapper" class="md:col-span-2 hidden">
+                        <label for="chamado-status-form" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+                        <select id="chamado-status-form" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-gold focus:border-brand-gold block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600">
+                            <option value="Em Espera">Em Espera</option>
+                            <option value="Respondido">Respondido</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-6 space-x-4">
+                    <button type="button" id="cancel-chamado-form" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-brand-gold rounded-md hover:bg-brand-gold-dark">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- FIM DA NOVA PÁGINA DE CHAMADOS -->
                 </main>
             </div>
         </div>
@@ -1698,6 +1814,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let reembolsosData = [];
     let validadesData = [];
     let servicosData = [];
+    let chamadosData = [];
 
      const GLOBAL_LABEL_MAP = {
         // Campos de Consultor e Cliente
@@ -1723,6 +1840,7 @@ document.addEventListener('DOMContentLoaded', function() {
         visitasdocliente: 'Visitas do Cliente',
         receitasdocliente: 'Receitas do Cliente',
         valor: 'Valor',
+        mensagem: 'Mensagem',
 
         // Campos de Férias, Atestados, EPIs, Ativos,Validades,Reembolsos
         consultores: 'Consultor',
@@ -2307,7 +2425,7 @@ async function fetchAllData() {
     await Promise.all([ 
         fetchConsultores(), fetchClientes(), fetchCustos(), fetchReceitas(), // Traz Receitas junto com Custos
         fetchItensCatalogo(), fetchClienteDocs(), fetchReembolsos(), 
-        fetchValidades(), fetchServicos() 
+        fetchValidades(), fetchServicos(), fetchChamados() 
     ]);
 
     // Verifica e gera custos recorrentes
@@ -2382,7 +2500,7 @@ async function fetchAllData() {
     applyAndRenderEpis();
     applyAndRenderAtivos();
     applyAndRenderServicos(); 
-
+    applyAndRenderChamados();
     updateAllDashboards();
     initializeCalendar();
     applyFilters();
@@ -2392,6 +2510,10 @@ async function fetchAllData() {
     
     hideLoadingOverlay();
 }
+async function fetchChamados() { 
+        const result = await nocoFetch('Chamados?nested[all]=true'); 
+        if(result && result.list) chamadosData = result.list; else chamadosData = []; 
+    }
     async function fetchConsultores() {
         const result = await nocoFetch('Consultores?nested[all]=true');
         if (result && result.list) {
@@ -2513,7 +2635,7 @@ async function fetchReembolsos() {
         if (receitasTab) receitasTab.parentElement.style.display = '';
         if (custosTab) custosTab.parentElement.style.display = '';
     }
-    // --- FIM DA ALTERAÇÃO ---
+    
     if (consultorFilterWrapper && clienteFilterWrapper) {
         if (loggedInUser && (loggedInUser.Role === 'Admin' || loggedInUser.Role === 'Gestor')) {
             consultorFilterWrapper.classList.remove('hidden');
@@ -2746,11 +2868,11 @@ function createConsultorCard(c) {
             </a>
         `;
     }
-    // --- FIM DA ALTERAÇÃO ---
+   
     
     // O antigo div com o ícone do WhatsApp será substituído pelo novo.
     return `<div class="cliente-card relative bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 flex flex-col items-center text-center cursor-pointer hover:shadow-xl transition-shadow" ${dataset} data-nome="${c.Nome}" data-status="${c.Status || 'Ativo'}" data-categoria="${c.Categoria || 'Lead'}"> 
-    // --- FIM DA ALTERAÇÃO ---
+    
                 <span class="absolute top-2 right-2 h-3 w-3 rounded-full ${statusClass}" title="Status: ${c.Status || 'Ativo'}"></span>
                 <img src="${fotoUrl}" class="w-24 h-24 rounded-lg object-cover mb-4"> 
                 <h4 class="font-bold text-lg text-gray-800 dark:text-white">${c.Nome}</h4> 
@@ -3147,7 +3269,6 @@ function applyAndRenderValidades() {
         
         return new Date(a.Validade) - new Date(b.Validade);
     });
-    // --- FIM DA ALTERAÇÃO ---
 
     renderValidades(filtered);
 }
@@ -3314,6 +3435,22 @@ function applyAndRenderValidades() {
                 callback = async () => { await fetchServicos(); applyAndRenderServicos(); hideSubFormToggle('servicos-history-container', 'servico-form-container'); };
                 break;
             }
+             case 'chamado-form':
+            id = form.dataset.id;
+            endpoint = id ? `Chamados/${id}` : 'Chamados';
+            body = {
+                Nome: form.querySelector('#chamado-nome').value,
+                Contato: form.querySelector('#chamado-contato').value,
+                Mensagem: form.querySelector('#chamado-mensagem').value,
+                Observacao: form.querySelector('#chamado-observacao').value,
+                Status: form.querySelector('#chamado-status-form').value,
+            };
+            if (!id) { // Se for um novo chamado
+                body.Data = new Date().toISOString();
+                body.Status = 'Em Espera';
+            }
+            callback = async () => { await fetchChamados(); applyAndRenderChamados(); hideModal(document.getElementById('chamado-form-modal')); };
+            break;
             case 'item-form': {
                 endpoint = id ? `Itens_Catalogo/${id}` : 'Itens_Catalogo';
                 const itemName = document.getElementById('item-name').value;
@@ -3522,6 +3659,10 @@ function applyAndRenderValidades() {
     endpoint = `Validades/${id}`; 
     callback = async () => { await fetchValidades(); applyAndRenderValidades(); }; 
     break;
+    case 'chamado': 
+            endpoint = `Chamados/${id}`; 
+            callback = async () => { await fetchChamados(); applyAndRenderChamados(); }; 
+            break;
             case 'custo': endpoint = `Custos/${id}`; callback = async () => { await fetchCustos(); applyAndRenderCustos(); }; break;
             case 'visita': endpoint = `Visitas/${id}`; callback = async () => { await fetchVisitas(); applyFilters(); }; break;
             case 'consultor': endpoint = `Consultores/${id}`; callback = async () => { await fetchConsultores(); renderConsultores(); }; break;
@@ -3678,7 +3819,7 @@ async function handleEditItemObservation(itemJoinId, currentObs) {
                 // 3. Atualiza a tabela principal de requisições.
                 applyRequisicaoFilters();
 
-                // --- FIM DA ALTERAÇÃO ---
+               
             } else {
                 alert('Falha ao remover o item.');
             }
@@ -4239,8 +4380,7 @@ function handleViewToggle(e) {
                 mainContentWrapper.classList.add('is-overflowing-view');
             }
         }
-        // --- FIM DA ALTERAÇÃO ---
-
+        
         document.querySelectorAll('.view-toggle-btn').forEach(b => b.classList.remove('bg-white', 'dark:bg-gray-800', 'shadow-sm'));
         btn.classList.add('bg-white', 'dark:bg-gray-800', 'shadow-sm');
         document.querySelectorAll('.visitas-view').forEach(v => v.classList.add('hidden'));
@@ -4364,8 +4504,7 @@ const pageWidth = doc.internal.pageSize.getWidth();
             }
         });
 
-        // --- FIM DA ALTERAÇÃO ---
-
+        
         doc.save(`Agenda_Lumi_${startDate}_a_${endDate}.pdf`);
     }
 
@@ -4393,6 +4532,25 @@ function handleTableEdit(btn) {
     } 
     break; 
 }
+case 'chamado': { 
+            const c = chamadosData.find(d => d.Id === id); 
+            if (c) { 
+                const form = document.getElementById('chamado-form');
+                form.dataset.id = c.Id;
+                document.getElementById('chamado-modal-title').textContent = "Editar Chamado";
+                form.querySelector('#chamado-nome').value = c.Nome;
+                form.querySelector('#chamado-contato').value = c.Contato || '';
+                form.querySelector('#chamado-mensagem').value = c.Mensagem || '';
+                form.querySelector('#chamado-observacao').value = c.Observacao || '';
+                
+                const statusWrapper = document.getElementById('chamado-status-wrapper');
+                statusWrapper.classList.remove('hidden');
+                form.querySelector('#chamado-status-form').value = c.Status;
+
+                showModal(document.getElementById('chamado-form-modal'));
+            } 
+            break; 
+        }
         case 'validade': { 
     const v = validadesData.find(d => d.Id === id); 
     if (v) { 
@@ -4514,10 +4672,9 @@ const openDetailsModal = (card) => {
             return '';
         }
 
-        // --- INÍCIO DA ALTERAÇÃO ---
-        // Usa o mapa GLOBAL_LABEL_MAP e mantém o fallback
+                // Usa o mapa GLOBAL_LABEL_MAP e mantém o fallback
         const label = GLOBAL_LABEL_MAP[keyLower] || k.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
-        // --- FIM DA ALTERAÇÃO ---
+        
         
         const v = fm[k] ? fm[k](data[k]) : (data[k] || 'N/A');
         return `<p><strong>${label}:</strong> ${v}</p>`;
@@ -4570,6 +4727,7 @@ const openDetailsModal = (card) => {
         case 'requisicao': dataArray = requisicoesData; title = 'Detalhes da Requisição'; break;
         case 'reembolso': dataArray = reembolsosData; title = 'Detalhes do Reembolso'; break;
         case 'servico': dataArray = servicosData; title = 'Detalhes do Serviço'; break;
+        case 'chamado': dataArray = chamadosData; title = 'Detalhes do Chamado'; break;
         default: return;
     }
     const data = dataArray.find(d => d.Id === id);
@@ -5148,10 +5306,10 @@ function renderAcoesCriticasTable(data) {
         ); 
     const cM=vs=>vs.reduce((t,v)=>t+calculateDuration(v),0); 
     
-    // --- INÍCIO DA ALTERAÇÃO ---
+    
     // Adicionado Math.round() para arredondar os minutos
     const fM=m=>`${Math.floor(m/60)}h ${Math.round(m%60)}m`; 
-    // --- FIM DA ALTERAÇÃO ---
+    
 
     document.getElementById('dash-hours-completed').textContent=fM(cM(fV.filter(v=>v.Status==='Concluída'))); 
     document.getElementById('dash-hours-scheduled').textContent=fM(cM(fV.filter(v=>v.Status==='Agendada'))); 
@@ -5172,10 +5330,9 @@ function renderAcoesCriticasTable(data) {
     const sH=Object.entries(stats).sort((a,b)=>b[1].minutes-a[1].minutes); 
     const sC=Object.entries(stats).sort((a,b)=>b[1].count-a[1].count); 
     
-    // --- INÍCIO DA ALTERAÇÃO ---
-    // Adicionado Math.round() para arredondar os minutos
+       // Adicionado Math.round() para arredondar os minutos
     const fM=m=>`${Math.floor(m/60)}h ${Math.round(m%60)}m`; 
-    // --- FIM DA ALTERAÇÃO ---
+    
 
     const tHL=document.getElementById('dash-top-consultants-hours'); 
     tHL.innerHTML=sH.map(([n,s])=>`<li class="flex justify-between items-center"><span>${n}</span><span class="font-bold">${fM(s.minutes)}</span></li>`).join('')||`<li>Nenhum dado.</li>`; 
@@ -5215,14 +5372,13 @@ function applyFilters() {
         });
     }
 
-    // --- INÍCIO DA ALTERAÇÃO ---
     // Ordena pela data e hora de início, do mais antigo para o mais novo.
     f.sort((a, b) => {
         const dateTimeA = new Date(`${a.DataVisita}T${a.HoraInicio}`);
         const dateTimeB = new Date(`${b.DataVisita}T${b.HoraInicio}`);
         return dateTimeA - dateTimeB;
     });
-    // --- FIM DA ALTERAÇÃO ---
+    
 
     renderAllVisits(f);
 }
@@ -5238,8 +5394,7 @@ function applyFilters() {
     // que agora contém a lógica de permissão e vai filtrar corretamente
     // com base no perfil do usuário, mesmo com os campos de filtro vazios.
     applyFilters();
-    // --- FIM DA ALTERAÇÃO ---
-}
+    }
     function renderAllVisits(d=visitsData){renderKanbanBoard(d.filter(v=>v.Status!=='Remarcada')); renderVisitsList(d); renderCalendarEvents(d);}
     function renderKanbanBoard(d){ 
     const c={'agendada':[],'em-andamento':[],'concluida':[]}; 
@@ -5259,7 +5414,6 @@ function applyFilters() {
     document.querySelector('.kanban-column[data-status="Agendada"] h3').innerHTML = `Agendada ${createCounterBadge(c.agendada.length)}`;
     document.querySelector('.kanban-column[data-status="Em Andamento"] h3').innerHTML = `Em Andamento ${createCounterBadge(c['em-andamento'].length)}`;
     document.querySelector('.kanban-column[data-status="Concluída"] h3').innerHTML = `Concluída ${createCounterBadge(c.concluida.length)}`;
-    // --- FIM DA ALTERAÇÃO ---
 
     // O restante da função, que renderiza os cards, permanece inalterado.
     document.getElementById('kanban-agendada').innerHTML=c.agendada.join(''); 
@@ -5362,8 +5516,7 @@ function createKanbanCard(v){
         
         const editBtnHTML = canModify ? `<button class="table-edit-btn text-blue-500" data-type="visita"><i class="fas fa-edit"></i></button>` : '';
         const deleteBtnHTML = canModify ? `<button class="table-delete-btn text-red-500" data-type="visita"><i class="fas fa-trash"></i></button>` : '';
-        // --- FIM DA ALTERAÇÃO ---
-
+        
         const r=tB.insertRow(); 
         r.className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'; 
         r.dataset.id=v.Id; 
@@ -5423,7 +5576,122 @@ function createKanbanCard(v){
             hideLoadingOverlay();
         }
     }
-   
+   // Função principal para renderizar a tela de chamados
+function renderChamados(data = chamadosData) {
+    renderChamadosList(data);
+    renderChamadosKanban(data);
+}
+
+// Função para aplicar os filtros e re-renderizar
+function applyAndRenderChamados() {
+    const startDate = document.getElementById('filter-chamado-start-date').value;
+    const endDate = document.getElementById('filter-chamado-end-date').value;
+    const nome = document.getElementById('filter-chamado-nome').value.toLowerCase();
+    const status = document.getElementById('filter-chamado-status').value;
+
+    const filtered = chamadosData.filter(c =>
+        (!startDate || c.Data.startsWith(startDate)) &&
+        (!endDate || c.Data.startsWith(endDate)) &&
+        (!nome || (c.Nome || '').toLowerCase().includes(nome)) &&
+        (!status || c.Status === status)
+    ).sort((a, b) => new Date(b.Data) - new Date(a.Data)); // Mais recentes primeiro
+
+    renderChamados(filtered);
+}
+
+// Renderiza a visualização em Lista
+function renderChamadosList(data) {
+    const tbody = document.getElementById('chamados-table-body');
+    const cardsContainer = document.getElementById('chamados-cards-container-list');
+    if (!tbody || !cardsContainer) return;
+
+    tbody.innerHTML = '';
+    cardsContainer.innerHTML = '';
+
+    const getStatusClass = (status) => status === 'Respondido' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800';
+
+    data.forEach(c => {
+        const codChamado = `LUMI-${c.Id.toString().padStart(6, '0')}`;
+        const actionsHTML = `
+            <a href="https://wa.me/${c.Contato || ''}" target="_blank" class="text-green-500 hover:text-green-600" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+            <button class="table-details-btn text-gray-500" data-type="chamado" title="Ver Detalhes"><i class="fas fa-eye"></i></button>
+            <button class="table-edit-btn text-blue-500" data-type="chamado" title="Editar"><i class="fas fa-edit"></i></button>
+            <button class="table-delete-btn text-red-500" data-type="chamado" title="Apagar"><i class="fas fa-trash"></i></button>
+        `;
+
+        // Tabela Desktop
+        tbody.innerHTML += `
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" data-id="${c.Id}">
+                <td class="px-6 py-4 font-mono text-xs">${codChamado}</td>
+                <td class="px-6 py-4">${c.Nome}</td>
+                <td class="px-6 py-4">${new Date(c.Data).toLocaleString('pt-BR')}</td>
+                <td class="px-6 py-4"><span class="text-xs font-semibold px-2 py-0.5 rounded-full ${getStatusClass(c.Status)}">${c.Status}</span></td>
+                <td class="px-6 py-4 space-x-3">${actionsHTML}</td>
+            </tr>`;
+
+        // Card Mobile
+        cardsContainer.innerHTML += `
+            <div class="p-4 bg-white rounded-lg shadow dark:bg-gray-800 border dark:border-gray-700" data-id="${c.Id}">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-lg font-semibold text-gray-900 dark:text-white">${c.Nome}</p>
+                        <p class="font-mono text-xs text-gray-500">${codChamado}</p>
+                    </div>
+                    <span class="text-xs font-semibold px-2 py-0.5 rounded-full ${getStatusClass(c.Status)}">${c.Status}</span>
+                </div>
+                <div class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    <p><strong>Abertura:</strong> ${new Date(c.Data).toLocaleString('pt-BR')}</p>
+                </div>
+                <div class="flex justify-end pt-2 mt-2 border-t dark:border-gray-600 space-x-3">${actionsHTML}</div>
+            </div>`;
+    });
+}
+
+// Renderiza a visualização em Kanban
+function renderChamadosKanban(data) {
+    const colunas = { 'em-espera': [], 'respondido': [] };
+    data.forEach(c => {
+        const statusKey = c.Status.toLowerCase().replace(' ', '-');
+        if (colunas[statusKey]) {
+            colunas[statusKey].push(createChamadoKanbanCard(c));
+        }
+    });
+
+    const createCounterBadge = count => `<span class="ml-2 font-semibold text-gray-500 dark:text-gray-400">(${count})</span>`;
+    document.querySelector('.kanban-column[data-status="Em Espera"] h3').innerHTML = `Em Espera ${createCounterBadge(colunas['em-espera'].length)}`;
+    document.querySelector('.kanban-column[data-status="Respondido"] h3').innerHTML = `Respondido ${createCounterBadge(colunas.respondido.length)}`;
+
+    document.getElementById('kanban-em-espera').innerHTML = colunas['em-espera'].join('');
+    document.getElementById('kanban-respondido').innerHTML = colunas.respondido.join('');
+}
+
+// Cria o HTML para um card do Kanban
+function createChamadoKanbanCard(c) {
+    const statusClass = c.Status === 'Respondido' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800';
+    const codChamado = `LUMI-${c.Id.toString().padStart(6, '0')}`;
+    const actionsHTML = `
+        <a href="https://wa.me/${c.Contato || ''}" target="_blank" class="text-green-500 hover:text-green-600" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <button class="table-details-btn text-gray-500" data-type="chamado" title="Ver Detalhes"><i class="fas fa-eye"></i></button>
+        <button class="table-edit-btn text-blue-500" data-type="chamado" title="Editar"><i class="fas fa-edit"></i></button>
+        <button class="table-delete-btn text-red-500" data-type="chamado" title="Apagar"><i class="fas fa-trash"></i></button>
+    `;
+
+    return `
+        <div class="kanban-card bg-white dark:bg-gray-700 p-4 rounded-lg shadow" data-id="${c.Id}">
+            <div class="flex justify-between items-start mb-2">
+                <div>
+                    <h4 class="font-bold text-gray-800 dark:text-white">${c.Nome}</h4>
+                    <p class="font-mono text-xs text-gray-500">${codChamado}</p>
+                </div>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full ${statusClass}">${c.Status}</span>
+            </div>
+            <p class="text-sm text-gray-600 dark:text-gray-300">Aberto em: ${new Date(c.Data).toLocaleDateString('pt-BR')}</p>
+            <div class="mt-4 border-t pt-2 dark:border-gray-600 flex justify-end space-x-3">
+                ${actionsHTML}
+            </div>
+        </div>
+    `;
+}
     function handleRescheduleVisit(vId){const v=visitsData.find(d=>d.Id==vId); if(v){document.getElementById('is-rescheduling').value='true'; openVisitaModal(v);}}
     function openVisitaModal(v=null){ 
     const activeConsultores = consultoresData.filter(c => c.Status === 'Ativo');
@@ -5464,8 +5732,7 @@ function createKanbanCard(v){
         // Se for um novo agendamento por Admin/Gestor, o campo fica em branco
         if (!v) consultorSelect.value = '';
     }
-    // --- FIM DA ALTERAÇÃO ---
-
+    
     showModal(allElements.visitaFormModal);
 }
     
@@ -5496,7 +5763,7 @@ function createKanbanCard(v){
             // --- INÍCIO DA ALTERAÇÃO ---
             // Abre o modal de adicionar itens para a requisição recém-criada
             openRequisicaoItemModal(result.Id);
-            // --- FIM DA ALTERAÇÃO ---
+           
         } else {
             // Se algo der errado, a overlay já foi escondida, então só mostramos o erro
              alert('Não foi possível criar a nova requisição.');
@@ -5951,8 +6218,7 @@ function generateInsights() {
                 insightsHTML += `<p class="p-2 rounded-lg bg-yellow-100 dark:bg-yellow-900"><strong>Atenção:</strong> Existem <strong>${f(receitasPendentes)}</strong> em receitas pendentes.</p>`;
             }
         }
-        // --- FIM DA ALTERAÇÃO ---
-
+        
         // Insights de visitas são visíveis para Admin e Gestor
         const visitasConcluidas = visitsData.filter(v => v.Status === 'Concluída');
         if (visitasConcluidas.length > 0) {
@@ -6106,6 +6372,25 @@ document.getElementById('show-reembolso-form')?.addEventListener('click', () => 
             e.target.classList.add('filter-btn-active');
             applyClienteFilters();
         }
+    });
+    document.getElementById('show-chamado-form')?.addEventListener('click', () => {
+        const form = document.getElementById('chamado-form');
+        form.reset();
+        delete form.dataset.id;
+        document.getElementById('chamado-modal-title').textContent = "Novo Chamado";
+        document.getElementById('chamado-status-wrapper').classList.add('hidden');
+        showModal(document.getElementById('chamado-form-modal'));
+    });
+    document.getElementById('cancel-chamado-form')?.addEventListener('click', () => hideModal(document.getElementById('chamado-form-modal')));
+    document.querySelectorAll('.chamado-view-toggle-btn').forEach(btn => btn.addEventListener('click', e => {
+        const viewId = e.currentTarget.dataset.view;
+        document.querySelectorAll('.chamado-view-toggle-btn').forEach(b => b.classList.remove('bg-white', 'dark:bg-gray-800', 'shadow-sm'));
+        e.currentTarget.classList.add('bg-white', 'dark:bg-gray-800', 'shadow-sm');
+        document.querySelectorAll('.chamados-view').forEach(v => v.classList.add('hidden'));
+        document.getElementById(viewId).classList.remove('hidden');
+    }));
+    ['filter-chamado-start-date', 'filter-chamado-end-date', 'filter-chamado-status', 'filter-chamado-nome'].forEach(id => {
+        document.getElementById(id)?.addEventListener('input', applyAndRenderChamados);
     });
         // Cole esta função e o event listener dentro da sua função initializeApp()
 
