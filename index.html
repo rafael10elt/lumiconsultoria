@@ -2577,6 +2577,15 @@ async function fetchReembolsos() {
             financeiroContent.classList.remove('hidden');
         }
     }
+    // Controla a visibilidade dos filtros de categoria de cliente
+    const categoryFilters = document.getElementById('cliente-category-filters');
+    if (categoryFilters) {
+        if (loggedInUser.Role === 'Admin') {
+            categoryFilters.style.display = 'flex'; // Mostra os filtros para o Admin
+        } else {
+            categoryFilters.style.display = 'none'; // Esconde para os outros
+        }
+    }
     await fetchAllData(); // Chamamos a função que agora contém a lógica correta
 
     let savedPage = sessionStorage.getItem('currentPage');
@@ -2756,22 +2765,23 @@ function createConsultorCard(c) {
     const fotoUrl = (c.Foto && c.Foto[0]?.signedPath) ? `${NocoDB_BaseURL}/${c.Foto[0].signedPath}` : `https://picsum.photos/seed/${c.Nome.replace(/\s/g, '')}/100/100`; 
     const dataset = Object.keys(c).map(k => `data-${k.toLowerCase()}="${c[k] && typeof c[k] === 'object' ? JSON.stringify(c[k]) : (c[k] || '')}"`).join(' '); 
     const statusClass = c.Status === 'Ativo' ? 'bg-green-500' : 'bg-red-500';
-
-    // Lógica para gerar o ícone da categoria
-    const getCategoryIcon = (category) => {
-        switch (category) {
-            case 'Lead':
-                return '<span class="absolute top-2 left-2 text-yellow-500" title="Categoria: Lead"><i class="fas fa-lightbulb fa-lg"></i></span>';
-            case 'Contrato':
-                return '<span class="absolute top-2 left-2 text-blue-500" title="Categoria: Contrato"><i class="fas fa-handshake fa-lg"></i></span>';
-            case 'Serviço':
-                return '<span class="absolute top-2 left-2 text-purple-500" title="Categoria: Serviço"><i class="fas fa-cogs fa-lg"></i></span>';
-            default:
-                return ''; // Retorna vazio se não houver categoria
-        }
-    };
-    const categoryIconHTML = getCategoryIcon(c.Categoria);
-
+    let categoryIconHTML = ''; // Começa com uma string vazia
+    // Apenas gera o ícone se o usuário for Admin
+    if (loggedInUser && loggedInUser.Role === 'Admin') {
+        const getCategoryIcon = (category) => {
+            switch (category) {
+                case 'Lead':
+                    return '<span class="absolute top-2 left-2 text-yellow-500" title="Categoria: Lead"><i class="fas fa-lightbulb fa-lg"></i></span>';
+                case 'Contrato':
+                    return '<span class="absolute top-2 left-2 text-blue-500" title="Categoria: Contrato"><i class="fas fa-handshake fa-lg"></i></span>';
+                case 'Serviço':
+                    return '<span class="absolute top-2 left-2 text-purple-500" title="Categoria: Serviço"><i class="fas fa-cogs fa-lg"></i></span>';
+                default:
+                    return '';
+            }
+        };
+        categoryIconHTML = getCategoryIcon(c.Categoria);
+    }
     let actionIconsHTML = `
         <a href="https://wa.me/${c.Telefone || ''}" target="_blank" class="text-green-500 hover:text-green-600" title="WhatsApp">
             <i class="fab fa-whatsapp fa-lg"></i>
@@ -4499,7 +4509,7 @@ const openDetailsModal = (card) => {
             return '';
         }
 
-        const adminOnlyFields = ['horascontratadas', 'cpfresponsavel', 'receitasdocliente', 'visitasdocliente', 'valor'];
+        const adminOnlyFields = ['horascontratadas', 'cpfresponsavel', 'receitasdocliente', 'visitasdocliente', 'valor', 'categoria'];
         if (adminOnlyFields.includes(keyLower) && (!loggedInUser || loggedInUser.Role !== 'Admin')) {
             return '';
         }
